@@ -1,0 +1,29 @@
+{
+  "metadata": {
+    "source": "Demo Central Sync",
+    "last_updated": "2026-06-06"
+  },
+  "rules": [
+    {
+      "drug": "Tenofovir",
+      "conflict_with": "Ibuprofen",
+      "risk_level": "HIGH",
+      "outcome": "Increased risk of renal toxicity",
+      "recommendation": "Monitor renal function closely"
+    },
+    {
+      "drug": "Simvastatin",
+      "conflict_with": "Clarithromycin",
+      "risk_level": "CRITICAL",
+      "outcome": "Risk of severe rhabdomyolysis",
+      "recommendation": "Avoid combination; use alternative statin"
+    },
+    {
+      "drug": "Methotrexate",
+      "conflict_with": "Trimethoprim",
+      "risk_level": "CRITICAL",
+      "outcome": "Severe bone marrow suppression",
+      "recommendation": "Contraindicated; use alternative antibiotic"
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "metadata": {
+    "source": "WHO Essential Medicines List",
+    "version": "2025",
+    "last_updated": "2026-06-05",
+    "notes": "Structured rules aligned with OCML-DI schema"
+  },
+  "rules": [
+    {
+      "drug": "Warfarin",
+      "interaction_type": "drug-drug",
+      "conflict_with": "Ibuprofen",
+      "risk_level": "HIGH",
+      "outcome": "Increased bleeding risk",
+      "recommendation": "Avoid combination; clinical review required",
+      "population": "Adults",
+      "dosage_threshold": "Any concurrent use",
+      "evidence_level": "WHO EML + clinical guidelines",
+      "alternative_drugs": ["Paracetamol"]
+    },
+    {
+      "drug": "Ibuprofen",
+      "interaction_type": "drug-condition",
+      "conflict_with": "Chronic Kidney Disease",
+      "risk_level": "HIGH",
+      "outcome": "Potential kidney damage",
+      "recommendation": "Use alternative analgesic; monitor renal function",
+      "population": "Adults, Elderly",
+      "dosage_threshold": "≥400mg daily",
+      "evidence_level": "WHO EML + nephrology consensus",
+      "alternative_drugs": ["Paracetamol", "Tramadol (short-term)"]
+    },
+    {
+      "drug": "Penicillin",
+      "interaction_type": "drug-allergy",
+      "conflict_with": "Penicillin Allergy",
+      "risk_level": "CRITICAL",
+      "outcome": "Severe allergic reaction",
+      "recommendation": "Contraindicated; do not prescribe",
+      "population": "All",
+      "dosage_threshold": "Any exposure",
+      "evidence_level": "WHO EML + allergy guidelines",
+      "alternative_drugs": ["Macrolides (Azithromycin)", "Cephalosporins (with caution)"]
+    },
+    {
+      "drug": "Methotrexate",
+      "interaction_type": "drug-drug",
+      "conflict_with": "Trimethoprim",
+      "risk_level": "HIGH",
+      "outcome": "Bone marrow suppression",
+      "recommendation": "Avoid combination; monitor blood counts",
+      "population": "Adults",
+      "dosage_threshold": "Concurrent use >5mg/week",
+      "evidence_level": "WHO EML + oncology guidelines",
+      "alternative_drugs": ["Folic Acid supplementation", "Alternative antibiotics"]
+    },
+    {
+      "drug": "ACE Inhibitors",
+      "interaction_type": "drug-condition",
+      "conflict_with": "Pregnancy",
+      "risk_level": "CRITICAL",
+      "outcome": "Fetal toxicity",
+      "recommendation": "Contraindicated in pregnancy",
+      "population": "Pregnant women",
+      "dosage_threshold": "Any use",
+      "evidence_level": "WHO EML + obstetric guidelines",
+      "alternative_drugs": ["Methyldopa", "Labetalol"]
+    },
+    {
+      "drug": "Aspirin",
+      "interaction_type": "drug-condition",
+      "conflict_with": "Peptic Ulcer Disease",
+      "risk_level": "MODERATE",
+      "outcome": "Risk of gastrointestinal bleeding",
+      "recommendation": "Use gastroprotective agent or alternative therapy",
+      "population": "Adults",
+      "dosage_threshold": "≥75mg daily",
+      "evidence_level": "WHO EML + gastroenterology guidelines",
+      "alternative_drugs": ["Paracetamol", "Proton Pump Inhibitors (co-therapy)"]
+    },
+    {
+      "drug": "Gentamicin",
+      "interaction_type": "drug-condition",
+      "conflict_with": "Renal Impairment",
+      "risk_level": "HIGH",
+      "outcome": "Nephrotoxicity",
+      "recommendation": "Avoid or adjust dose; monitor renal function",
+      "population": "Adults, Elderly",
+      "dosage_threshold": "Standard dosing in impaired renal function",
+      "evidence_level": "WHO EML + infectious disease guidelines",
+      "alternative_drugs": ["Ceftriaxone"]
+    }
+  ]
+}

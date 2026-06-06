@@ -1,0 +1,94 @@
+{
+  "metadata": {
+    "source": "DrugBank (curated interactions)",
+    "version": "2025",
+    "last_updated": "2026-06-05",
+    "notes": "Structured interaction rules aligned with OCML-DI schema"
+  },
+  "rules": [
+    {
+      "drug": "Efavirenz",
+      "interaction_type": "drug-drug",
+      "conflict_with": "Rifampicin",
+      "risk_level": "HIGH",
+      "outcome": "Rifampicin induces CYP3A4, reducing efavirenz plasma levels",
+      "recommendation": "Increase efavirenz dose or monitor viral load",
+      "population": "Adults with HIV/TB co-infection",
+      "dosage_threshold": "Standard co-administration",
+      "evidence_level": "DrugBank + clinical guidelines",
+      "alternative_drugs": ["Dolutegravir"]
+    },
+    {
+      "drug": "Tenofovir",
+      "interaction_type": "drug-drug",
+      "conflict_with": "Ibuprofen",
+      "risk_level": "HIGH",
+      "outcome": "Additive nephrotoxicity risk",
+      "recommendation": "Avoid prolonged NSAID use; monitor renal function",
+      "population": "Adults, Elderly",
+      "dosage_threshold": "Chronic NSAID therapy",
+      "evidence_level": "DrugBank + nephrology consensus",
+      "alternative_drugs": ["Paracetamol"]
+    },
+    {
+      "drug": "Lopinavir/Ritonavir",
+      "interaction_type": "drug-drug",
+      "conflict_with": "Artemether-Lumefantrine",
+      "risk_level": "CRITICAL",
+      "outcome": "QT prolongation and arrhythmia risk",
+      "recommendation": "Contraindicated; use alternative antimalarial",
+      "population": "Adults with HIV/Malaria co-infection",
+      "dosage_threshold": "Any co-administration",
+      "evidence_level": "DrugBank + malaria guidelines",
+      "alternative_drugs": ["Atovaquone-Proguanil"]
+    },
+    {
+      "drug": "Isoniazid",
+      "interaction_type": "drug-drug",
+      "conflict_with": "Efavirenz",
+      "risk_level": "MODERATE",
+      "outcome": "Increased risk of hepatotoxicity",
+      "recommendation": "Monitor liver function tests",
+      "population": "Adults with HIV/TB co-infection",
+      "dosage_threshold": "Standard co-administration",
+      "evidence_level": "DrugBank + hepatology guidelines",
+      "alternative_drugs": []
+    },
+    {
+      "drug": "Chloroquine",
+      "interaction_type": "drug-drug",
+      "conflict_with": "Efavirenz",
+      "risk_level": "HIGH",
+      "outcome": "Risk of QT prolongation",
+      "recommendation": "Avoid combination; monitor ECG if unavoidable",
+      "population": "Adults with HIV/Malaria co-infection",
+      "dosage_threshold": "Standard co-administration",
+      "evidence_level": "DrugBank + cardiology guidelines",
+      "alternative_drugs": ["Artemether-Lumefantrine"]
+    },
+    {
+      "drug": "Zidovudine",
+      "interaction_type": "drug-drug",
+      "conflict_with": "Cotrimoxazole",
+      "risk_level": "HIGH",
+      "outcome": "Bone marrow suppression risk",
+      "recommendation": "Monitor blood counts; consider alternative prophylaxis",
+      "population": "Adults, Children",
+      "dosage_threshold": "Prolonged co-administration",
+      "evidence_level": "DrugBank + hematology guidelines",
+      "alternative_drugs": ["Dapsone"]
+    },
+    {
+      "drug": "Ritonavir",
+      "interaction_type": "drug-drug",
+      "conflict_with": "Simvastatin",
+      "risk_level": "CRITICAL",
+      "outcome": "Marked increase in simvastatin levels; risk of rhabdomyolysis",
+      "recommendation": "Contraindicated; use alternative statin",
+      "population": "Adults with HIV and dyslipidemia",
+      "dosage_threshold": "Any co-administration",
+      "evidence_level": "DrugBank + lipid guidelines",
+      "alternative_drugs": ["Atorvastatin (low dose)", "Pravastatin"]
+    }
+  ]
+}

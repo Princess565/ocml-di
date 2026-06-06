@@ -1,0 +1,307 @@
+{
+  "_meta": {
+    "version": "1.0.0",
+    "description": "Manually curated drug interaction rules for the African clinical context. Prioritises HIV/ARV, malaria, TB, and NSAID interactions common in sub-Saharan African healthcare settings.",
+    "sources": [
+      "WHO Model Formulary 2023",
+      "Nigeria Essential Medicines List 8th Edition 2024",
+      "EMDEX 2025-2026",
+      "Liverpool HIV Drug Interactions Database (hiv-druginteractions.org)",
+      "WHO Guidelines for Treatment of Malaria 3rd Edition",
+      "Nigeria Standard Treatment Guidelines"
+    ],
+    "last_updated": "2025-06-01",
+    "maintainer": "Efe Ikharo — OCML-DI Project Lead",
+    "license": "CC-BY-4.0",
+    "note": "This file is checked FIRST by risk_engine.py before any external API lookup. All rules here are validated for the West African clinical context."
+  },
+
+  "risk_levels": {
+    "1": { "label": "low",      "color": "green",  "action": "Informational — monitor patient" },
+    "2": { "label": "moderate", "color": "amber",  "action": "Additional review recommended — consider alternative" },
+    "3": { "label": "high",     "color": "orange", "action": "Strong caution — clinician must review before dispensing" },
+    "4": { "label": "critical", "color": "red",    "action": "MANDATORY human review — do not dispense without senior clinician sign-off" }
+  },
+
+  "interaction_rules": [
+
+    {
+      "rule_id": "AFR-001",
+      "cluster": "NSAID_RENAL",
+      "priority": true,
+      "drug_a": {
+        "names": ["ibuprofen", "diclofenac", "indomethacin", "aspirin", "naproxen", "piroxicam", "meloxicam", "celecoxib"],
+        "drug_class": "NSAID"
+      },
+      "condition_triggers": ["kidney disease", "chronic kidney disease", "CKD", "renal failure", "renal impairment", "nephrotic syndrome", "glomerulonephritis"],
+      "risk_score": 9,
+      "risk_level": 4,
+      "interaction_type": "drug_condition",
+      "mechanism": "NSAIDs inhibit prostaglandin synthesis, reducing renal blood flow and GFR. In patients with existing renal impairment, this can precipitate acute kidney injury or accelerate chronic kidney disease progression.",
+      "clinical_consequence": "Acute kidney injury, worsening of chronic kidney disease, fluid retention, hypertension, hyperkalaemia",
+      "warning_message": "CRITICAL: NSAIDs are contraindicated in patients with kidney disease. Ibuprofen and other NSAIDs reduce blood flow to the kidneys and can cause acute kidney failure in this patient.",
+      "recommendation": "Avoid all NSAIDs. Use paracetamol (acetaminophen) for pain/fever. Refer to clinician for renal-safe analgesic plan.",
+      "alternatives": ["paracetamol", "tramadol (with caution)", "codeine (with caution)"],
+      "demo_case": true,
+      "demo_patient": "Amina Bello"
+    },
+
+    {
+      "rule_id": "AFR-002",
+      "cluster": "NSAID_HYPERTENSION",
+      "priority": true,
+      "drug_a": {
+        "names": ["ibuprofen", "diclofenac", "indomethacin", "naproxen", "piroxicam", "meloxicam"],
+        "drug_class": "NSAID"
+      },
+      "condition_triggers": ["hypertension", "high blood pressure", "HTN", "heart failure", "cardiac failure"],
+      "risk_score": 7,
+      "risk_level": 3,
+      "interaction_type": "drug_condition",
+      "mechanism": "NSAIDs cause sodium and water retention and blunt the effect of antihypertensive medications, raising blood pressure.",
+      "clinical_consequence": "Blood pressure elevation, reduced efficacy of antihypertensives, increased cardiovascular event risk",
+      "warning_message": "HIGH RISK: NSAIDs reduce the effectiveness of blood pressure medications and can cause dangerous blood pressure spikes in hypertensive patients.",
+      "recommendation": "Use paracetamol instead. If NSAID is essential, use lowest dose for shortest duration and monitor BP closely.",
+      "alternatives": ["paracetamol"]
+    },
+
+    {
+      "rule_id": "AFR-003",
+      "cluster": "ARV_ANTIMALARIAL",
+      "priority": true,
+      "drug_a": {
+        "names": ["efavirenz", "EFV"],
+        "drug_class": "NNRTI"
+      },
+      "drug_b": {
+        "names": ["artemether-lumefantrine", "AL", "coartem", "lumefantrine", "artemether"],
+        "drug_class": "ACT_antimalarial"
+      },
+      "risk_score": 8,
+      "risk_level": 4,
+      "interaction_type": "drug_drug",
+      "mechanism": "Efavirenz is a potent inducer of CYP3A4 and CYP2B6. Artemether and lumefantrine are both metabolised by CYP3A4, leading to significantly reduced plasma concentrations of the antimalarials — up to 75% reduction in lumefantrine exposure.",
+      "clinical_consequence": "Subtherapeutic antimalarial levels, treatment failure, risk of promoting artemisinin resistance, recrudescent malaria",
+      "warning_message": "CRITICAL: Efavirenz drastically reduces blood levels of artemether-lumefantrine. This combination risks malaria treatment failure and may promote drug resistance.",
+      "recommendation": "Switch to artesunate-amodiaquine if possible, or use double-dose artemether-lumefantrine (4 tablets twice daily for adults) per WHO malaria/HIV co-infection guidelines. Refer to senior clinician.",
+      "alternatives": ["artesunate-amodiaquine (AS-AQ)", "artesunate-mefloquine"],
+      "references": ["WHO Guidelines for Treatment of Malaria 3rd Ed, Table 9.2", "Liverpool HIV DDI Database"]
+    },
+
+    {
+      "rule_id": "AFR-004",
+      "cluster": "ARV_ANTIMALARIAL",
+      "priority": true,
+      "drug_a": {
+        "names": ["nevirapine", "NVP"],
+        "drug_class": "NNRTI"
+      },
+      "drug_b": {
+        "names": ["amodiaquine", "artesunate-amodiaquine", "AS-AQ"],
+        "drug_class": "ACT_antimalarial"
+      },
+      "risk_score": 9,
+      "risk_level": 4,
+      "interaction_type": "drug_drug",
+      "mechanism": "Nevirapine induces CYP3A4. Amodiaquine is metabolised via CYP2C8 to its active metabolite desethylamodiaquine. Combined use has caused severe hepatotoxicity in clinical studies — a trial was stopped prematurely due to dramatic elevation of hepatic aminotransferases.",
+      "clinical_consequence": "Severe hepatotoxicity, elevated liver enzymes, potential liver failure",
+      "warning_message": "CRITICAL: Nevirapine + amodiaquine combination has caused severe liver toxicity. This combination should be avoided.",
+      "recommendation": "Use artemether-lumefantrine instead of AS-AQ in patients on nevirapine-based ART. Refer to HIV clinician before prescribing antimalarial.",
+      "alternatives": ["artemether-lumefantrine"],
+      "references": ["Pfeil et al. 2012 — trial stopped due to hepatotoxicity", "Liverpool HIV DDI Database"]
+    },
+
+    {
+      "rule_id": "AFR-005",
+      "cluster": "ARV_ANTIMALARIAL",
+      "priority": true,
+      "drug_a": {
+        "names": ["dolutegravir", "DTG", "tivicay"],
+        "drug_class": "INSTI"
+      },
+      "drug_b": {
+        "names": ["artemether-lumefantrine", "coartem", "AL"],
+        "drug_class": "ACT_antimalarial"
+      },
+      "risk_score": 5,
+      "risk_level": 2,
+      "interaction_type": "drug_drug",
+      "mechanism": "Lumefantrine moderately inhibits UGT1A1, the primary enzyme metabolising dolutegravir. This may increase dolutegravir exposure, though clinical significance is moderate.",
+      "clinical_consequence": "Possible increased dolutegravir side effects (nausea, headache, insomnia), generally manageable",
+      "warning_message": "MODERATE: Dolutegravir + artemether-lumefantrine may increase dolutegravir levels. Monitor for side effects. This combination is generally considered usable with monitoring.",
+      "recommendation": "Monitor for dolutegravir side effects. No dose adjustment typically required. Preferred over efavirenz + AL combination.",
+      "references": ["Dolutegravir-Artemether/Lumefantrine DDI study, Biorxiv 2018"]
+    },
+
+    {
+      "rule_id": "AFR-006",
+      "cluster": "TB_ARV",
+      "priority": true,
+      "drug_a": {
+        "names": ["rifampicin", "rifampin", "RIF"],
+        "drug_class": "rifamycin_antibiotic"
+      },
+      "drug_b": {
+        "names": ["dolutegravir", "DTG", "tivicay"],
+        "drug_class": "INSTI"
+      },
+      "risk_score": 9,
+      "risk_level": 4,
+      "interaction_type": "drug_drug",
+      "mechanism": "Rifampicin is the most potent known inducer of CYP450 enzymes and UGT1A1. It reduces dolutegravir plasma concentrations by approximately 75%, rendering standard doses non-therapeutic.",
+      "clinical_consequence": "HIV treatment failure, viral rebound, development of ARV resistance",
+      "warning_message": "CRITICAL: Rifampicin reduces dolutegravir blood levels by 75%. Standard dolutegravir dose WILL FAIL in TB/HIV co-infected patients.",
+      "recommendation": "Double dolutegravir dose to 50mg twice daily when co-administering with rifampicin. Consult HIV/TB co-infection clinician immediately. Do not attempt to manage this without specialist input.",
+      "alternatives": ["efavirenz-based regimen (EFV 600mg OD) is an alternative for TB/HIV co-infection per WHO guidelines"],
+      "references": ["WHO Consolidated Guidelines on HIV 2021", "PEPFAR TB/HIV Integration Guidelines"]
+    },
+
+    {
+      "rule_id": "AFR-007",
+      "cluster": "TB_ARV",
+      "priority": true,
+      "drug_a": {
+        "names": ["rifampicin", "rifampin", "RIF"],
+        "drug_class": "rifamycin_antibiotic"
+      },
+      "drug_b": {
+        "names": ["lopinavir/ritonavir", "lopinavir", "ritonavir", "LPV/r", "kaletra"],
+        "drug_class": "PI"
+      },
+      "risk_score": 10,
+      "risk_level": 4,
+      "interaction_type": "drug_drug",
+      "mechanism": "Rifampicin dramatically reduces protease inhibitor plasma levels through CYP3A4 induction. Boosted PI regimens cannot overcome this induction — levels remain subtherapeutic even with dose doubling.",
+      "clinical_consequence": "Complete loss of HIV viral suppression, resistance development, treatment failure",
+      "warning_message": "CRITICAL: Rifampicin + protease inhibitors is a contraindicated combination. HIV suppression will fail. This patient requires immediate regimen switch.",
+      "recommendation": "Switch HIV regimen away from PI-based therapy during TB treatment. WHO recommends efavirenz-based or dolutegravir-based (with double DTG dose) regimens for TB/HIV co-treatment.",
+      "alternatives": ["efavirenz 600mg OD", "dolutegravir 50mg BD"],
+      "references": ["WHO TB/HIV Co-infection Guidelines 2021"]
+    },
+
+    {
+      "rule_id": "AFR-008",
+      "cluster": "TB_GENERAL",
+      "priority": false,
+      "drug_a": {
+        "names": ["rifampicin", "rifampin", "RIF"],
+        "drug_class": "rifamycin_antibiotic"
+      },
+      "drug_b": {
+        "names": ["warfarin", "acenocoumarol"],
+        "drug_class": "anticoagulant"
+      },
+      "risk_score": 8,
+      "risk_level": 3,
+      "interaction_type": "drug_drug",
+      "mechanism": "Rifampicin strongly induces CYP2C9, the primary enzyme metabolising warfarin, reducing anticoagulant effect dramatically. INR can drop to subtherapeutic levels within days.",
+      "clinical_consequence": "Loss of anticoagulation, thromboembolic events (stroke, DVT, PE)",
+      "warning_message": "HIGH RISK: Rifampicin significantly reduces warfarin effectiveness. Patients may develop clots if not closely monitored.",
+      "recommendation": "Monitor INR weekly when starting or stopping rifampicin. Warfarin dose will likely need to be increased 2-5x. Consider low-molecular-weight heparin as alternative if INR monitoring unavailable."
+    },
+
+    {
+      "rule_id": "AFR-009",
+      "cluster": "NSAID_ANTICOAGULANT",
+      "priority": false,
+      "drug_a": {
+        "names": ["ibuprofen", "diclofenac", "aspirin", "naproxen", "indomethacin"],
+        "drug_class": "NSAID"
+      },
+      "drug_b": {
+        "names": ["warfarin", "heparin", "enoxaparin", "acenocoumarol"],
+        "drug_class": "anticoagulant"
+      },
+      "risk_score": 8,
+      "risk_level": 3,
+      "interaction_type": "drug_drug",
+      "mechanism": "NSAIDs inhibit platelet aggregation and displace warfarin from plasma proteins, increasing free warfarin levels. Combined effect dramatically increases bleeding risk.",
+      "clinical_consequence": "Gastrointestinal bleeding, intracranial bleeding, prolonged bleeding",
+      "warning_message": "HIGH RISK: NSAIDs + anticoagulants significantly increase bleeding risk. This combination should be avoided.",
+      "recommendation": "Use paracetamol for pain/fever in anticoagulated patients. If NSAID is essential, use lowest dose + PPI cover and monitor INR closely."
+    },
+
+    {
+      "rule_id": "AFR-010",
+      "cluster": "SICKLE_CELL",
+      "priority": true,
+      "drug_a": {
+        "names": ["ibuprofen", "diclofenac", "indomethacin", "aspirin", "naproxen"],
+        "drug_class": "NSAID"
+      },
+      "condition_triggers": ["sickle cell disease", "sickle cell anaemia", "SCD", "HbSS"],
+      "risk_score": 7,
+      "risk_level": 3,
+      "interaction_type": "drug_condition",
+      "mechanism": "NSAIDs reduce renal prostaglandin synthesis, impairing the renal concentrating ability already compromised in sickle cell disease. Risk of renal papillary necrosis and acute kidney injury is elevated.",
+      "clinical_consequence": "Acute kidney injury, renal papillary necrosis, worsening of renal function",
+      "warning_message": "HIGH RISK: NSAIDs are dangerous in sickle cell disease patients due to high risk of kidney damage.",
+      "recommendation": "Use paracetamol or opioid analgesics for pain crisis management. Avoid NSAIDs. Ensure adequate hydration.",
+      "note": "Sickle cell disease has high prevalence across sub-Saharan Africa — this rule is a West African clinical priority."
+    },
+
+    {
+      "rule_id": "AFR-011",
+      "cluster": "DIABETES_ANTIMALARIAL",
+      "priority": false,
+      "drug_a": {
+        "names": ["quinine", "quinidine"],
+        "drug_class": "antimalarial_alkaloid"
+      },
+      "condition_triggers": ["diabetes", "diabetes mellitus", "type 2 diabetes", "T2DM"],
+      "drug_b": {
+        "names": ["metformin", "glibenclamide", "glimepiride", "insulin"],
+        "drug_class": "antidiabetic"
+      },
+      "risk_score": 6,
+      "risk_level": 2,
+      "interaction_type": "drug_condition_drug",
+      "mechanism": "Quinine stimulates insulin secretion from pancreatic beta cells. In diabetic patients on antidiabetics, this can cause additive hypoglycaemia, sometimes severe.",
+      "clinical_consequence": "Hypoglycaemia, loss of consciousness, seizures",
+      "warning_message": "MODERATE: Quinine can cause low blood sugar in diabetic patients, especially when combined with diabetes medications.",
+      "recommendation": "Monitor blood glucose closely. Prefer artemisinin-based therapy over quinine where possible in diabetic patients."
+    },
+
+    {
+      "rule_id": "AFR-012",
+      "cluster": "PREGNANCY",
+      "priority": true,
+      "drug_a": {
+        "names": ["efavirenz", "EFV"],
+        "drug_class": "NNRTI"
+      },
+      "condition_triggers": ["pregnancy", "pregnant", "first trimester"],
+      "risk_score": 8,
+      "risk_level": 3,
+      "interaction_type": "drug_condition",
+      "mechanism": "Efavirenz was historically contraindicated in the first trimester due to teratogenicity concerns in animal studies. While evidence in humans is reassuring, WHO recommends dolutegravir as preferred ARV in pregnancy.",
+      "clinical_consequence": "Potential neural tube defects (animal data), though human risk appears low",
+      "warning_message": "HIGH CAUTION: Efavirenz in first trimester pregnancy. Current WHO guidelines recommend switching to dolutegravir-based regimen in pregnant women.",
+      "recommendation": "Refer to HIV/antenatal clinic. Switch to dolutegravir + TDF + 3TC per current WHO PMTCT guidelines.",
+      "references": ["WHO PMTCT Guidelines 2021"]
+    }
+  ],
+
+  "condition_aliases": {
+    "kidney disease": ["chronic kidney disease", "CKD", "renal failure", "renal impairment", "nephropathy", "glomerulonephritis", "nephrotic syndrome", "renal disease", "kidney failure"],
+    "hypertension": ["high blood pressure", "HTN", "elevated blood pressure", "hypertensive"],
+    "HIV": ["HIV positive", "HIV+", "PLHIV", "AIDS", "on ART", "antiretroviral therapy"],
+    "malaria": ["plasmodium", "falciparum malaria", "malaria fever"],
+    "tuberculosis": ["TB", "pulmonary TB", "PTB", "MTB"],
+    "diabetes": ["diabetes mellitus", "T2DM", "type 2 diabetes", "type 1 diabetes", "diabetic"],
+    "sickle cell": ["sickle cell disease", "SCD", "HbSS", "sickle cell anaemia"],
+    "pregnancy": ["pregnant", "gravid", "first trimester", "antenatal"]
+  },
+
+  "drug_name_aliases": {
+    "paracetamol": ["acetaminophen", "tylenol", "panadol", "emzor paracetamol"],
+    "ibuprofen": ["brufen", "advil", "nurofen", "hedex ibuprofen"],
+    "artemether-lumefantrine": ["AL", "coartem", "lonart", "lumartem", "co-lumether"],
+    "artesunate-amodiaquine": ["AS-AQ", "artequin", "coarsucam"],
+    "efavirenz": ["EFV", "stocrin", "sustiva", "efavirenz 600"],
+    "dolutegravir": ["DTG", "tivicay", "triumeq component"],
+    "nevirapine": ["NVP", "viramune"],
+    "rifampicin": ["rifampin", "RIF", "rifacin", "rimactane"],
+    "cotrimoxazole": ["trimethoprim-sulfamethoxazole", "TMP-SMX", "septrin", "bactrim"]
+  }
+}
