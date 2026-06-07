@@ -14,7 +14,7 @@ from .risk_engine import RiskEngine
 router = APIRouter()
 engine = RiskEngine()
 
-@router.post("/ussd")
+@router.post("/")
 async def ussd_handler(
     sessionId: str = Form(...),
     serviceCode: str = Form(...),

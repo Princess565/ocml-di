@@ -72,12 +72,13 @@ def patient_qr(patient_id: str, request: Request, user=Depends(get_current_user)
 
     # Generate QR code with patient ID + name (can encrypt later)
     qr = qrcode.QRCode(box_size=10, border=4)
-    qr.add_data({"id": patient.id, "name": patient.full_name})
+    import json
+    qr.add_data(json.dumps({"id": patient.id, "name": patient.full_name}))
     qr.make(fit=True)
 
     img = qr.make_image(fill_color="black", back_color="white")
     buffer = BytesIO()
-    img.save(buffer, format="PNG")
+    img.save(buffer, kind="PNG")
     qr_code_b64 = base64.b64encode(buffer.getvalue()).decode()
 
     return templates.TemplateResponse(

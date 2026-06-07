@@ -2,23 +2,6 @@
 # These are minimal models for hackathon demo speed.
 # Use them when OCML_MODE = "MVP"
 
-class MVPPatient(BaseModel):
-    full_name: str
-    conditions: list[str] = []
-    medications: list[str] = []
-    allergies: list[str] = []
-
-class MVPDrugCheckRequest(BaseModel):
-    proposed_drug: str
-    patient: MVPPatient
-
-class MVPDrugCheckResponse(BaseModel):
-    proposed_drug: str
-    interactions: list[str] = []
-    risk_level: str = "low"
-
-    def is_safe(self) -> bool:
-        return len(self.interactions) == 0
 """
 models.py
 OCML-DI — Offline Clinical Memory Layer with Drug Interaction Intelligence
