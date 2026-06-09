@@ -1,8 +1,0 @@
-risk_engine.py implements a three-pass evaluation loop. It checks the local Africa rules first — always works offline, runs in under 1ms. The DrugBank API is a fallback that only fires when a key is set and network is available. The to_ussd_string() method compresses any result into a USSD-compatible ~160 character format, which means the same engine powers both your clinician dashboard and the *347*MED# USSD layer without any extra code.
-
-
-234 (0) 802 306 0065
-+234 (0) 913 770 7338
-+234 (01) 715 9678
-call emdex tomorrow
-
