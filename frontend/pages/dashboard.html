@@ -1,0 +1,135 @@
+<!-- ═══════════════════════════════════════════════════════════
+     OCML-DI · Dashboard Screen
+     File: pages/dashboard.html
+     Include inside #screen-dashboard
+═══════════════════════════════════════════════════════════ -->
+
+<div id="screen-dashboard" class="screen active">
+
+  <!-- METRICS ROW -->
+  <div class="metrics-grid">
+    <div class="m-card mc-navy">
+      <div class="m-label">Patients</div>
+      <div class="m-value">1,245</div>
+      <div class="m-sub">registered</div>
+    </div>
+    <div class="m-card mc-red">
+      <div class="m-label">Critical</div>
+      <div class="m-value">38</div>
+      <div class="m-sub"><span class="pulse-dot"></span>needs review</div>
+    </div>
+    <div class="m-card mc-amber">
+      <div class="m-label">Pending</div>
+      <div class="m-value">12</div>
+      <div class="m-sub">awaiting MD</div>
+    </div>
+    <div class="m-card mc-teal">
+      <div class="m-label">CHW syncs</div>
+      <div class="m-value">307</div>
+      <div class="m-sub">today</div>
+    </div>
+    <div class="m-card mc-blue">
+      <div class="m-label">USSD checks</div>
+      <div class="m-value">4,512</div>
+      <div class="m-sub">total sessions</div>
+    </div>
+    <div class="m-card mc-green">
+      <div class="m-label">QR wallets</div>
+      <div class="m-value">891</div>
+      <div class="m-sub">issued</div>
+    </div>
+  </div>
+
+  <!-- MAIN ROW -->
+  <div style="display:grid;grid-template-columns:1fr 340px;gap:16px;margin-bottom:16px">
+
+    <!-- ALERTS CARD -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">
+          <span class="pulse-dot"></span>
+          <i class="ti ti-alert-triangle"></i>
+          Critical drug alerts
+        </div>
+        <div class="card-action">View all</div>
+      </div>
+      <div id="alerts-list">
+        <!-- Populated by dashboard.js -->
+      </div>
+    </div>
+
+    <!-- SIDEBAR WIDGETS -->
+    <div style="display:flex;flex-direction:column;gap:12px">
+
+      <!-- TREND CHART -->
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title"><i class="ti ti-chart-line"></i>7-day USSD activity</div>
+          <div style="font-size:11px;color:var(--teal);font-weight:600">+18% this week</div>
+        </div>
+        <div style="padding:14px 18px">
+          <canvas id="trendChart" height="80"
+            role="img" aria-label="USSD activity trend chart, upward over 7 days"></canvas>
+        </div>
+      </div>
+
+      <!-- USSD CHANNEL CARD -->
+      <div class="card" style="background:var(--navy-dark);border-color:var(--navy)">
+        <div class="card-head" style="border-color:rgba(255,255,255,0.1)">
+          <div class="card-title" style="color:#fff">
+            <i class="ti ti-device-mobile"></i>USSD channel
+          </div>
+          <div style="font-size:11px;color:#3fb950;display:flex;align-items:center;gap:5px">
+            <span style="width:6px;height:6px;border-radius:50%;background:#3fb950;display:inline-block"></span>
+            Live
+          </div>
+        </div>
+        <div style="padding:14px 18px">
+          <div style="font-family:var(--mono);font-size:22px;font-weight:500;color:var(--gold);margin-bottom:12px">
+            *384*52591#
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;justify-content:space-between;font-size:12px;border-top:1px solid rgba(255,255,255,0.1);padding-top:6px">
+              <span style="color:rgba(255,255,255,0.4)">Last check</span>
+              <span style="color:rgba(255,255,255,0.8)">2 mins ago</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:12px">
+              <span style="color:rgba(255,255,255,0.4)">Network</span>
+              <span style="color:rgba(255,255,255,0.8)">GSM 2G</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:12px">
+              <span style="color:rgba(255,255,255,0.4)">Sessions today</span>
+              <span style="color:rgba(255,255,255,0.8)">147</span>
+            </div>
+          </div>
+          <button id="open-ussd-btn"
+            style="width:100%;margin-top:14px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:var(--radius-sm);padding:9px;font-size:12px;color:rgba(255,255,255,0.7);cursor:pointer;font-family:var(--font)">
+            Open USSD simulator →
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RECENT PATIENTS TABLE -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title"><i class="ti ti-users"></i>Recent patients</div>
+      <div class="card-action" id="view-all-patients-btn">View all patients</div>
+    </div>
+    <table class="data-table" aria-label="Recent patients">
+      <thead>
+        <tr>
+          <th>Patient</th><th>ID</th><th>Condition</th>
+          <th>Last visit</th><th>Status</th><th></th>
+        </tr>
+      </thead>
+      <tbody id="recent-patients-tbody">
+        <!-- Populated by dashboard.js -->
+      </tbody>
+    </table>
+  </div>
+
+</div>
+	

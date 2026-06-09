@@ -1,0 +1,48 @@
+<!-- ═══════════════════════════════════════════════════════════
+     OCML-DI · Patients List Screen
+     File: pages/patients.html
+     Include inside #screen-patients
+═══════════════════════════════════════════════════════════ -->
+
+<div id="screen-patients" class="screen">
+
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+    <div style="display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 14px;flex:1;max-width:340px">
+      <i class="ti ti-search" style="color:var(--hint);font-size:16px" aria-hidden="true"></i>
+      <input
+        id="patient-search"
+        type="text"
+        placeholder="Search by name, ID, condition…"
+        aria-label="Search patients"
+        style="border:none;outline:none;font-family:var(--font);font-size:13px;color:var(--text);background:transparent;flex:1"
+      >
+    </div>
+    <button style="display:flex;align-items:center;gap:6px;padding:9px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;cursor:pointer;font-family:var(--font)">
+      <i class="ti ti-filter" aria-hidden="true"></i>Filter
+    </button>
+    <button style="display:flex;align-items:center;gap:6px;padding:9px 16px;background:var(--navy);border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;color:#fff;cursor:pointer;margin-left:auto;font-family:var(--font)">
+      <i class="ti ti-plus" aria-hidden="true"></i>Add patient
+    </button>
+  </div>
+
+  <div class="card">
+    <table class="data-table" aria-label="All patients">
+      <thead>
+        <tr>
+          <th>Patient</th>
+          <th>ID</th>
+          <th>Age</th>
+          <th>Conditions</th>
+          <th>Medications</th>
+          <th>Last visit</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="patients-tbody">
+        <!-- Populated by app.js renderPatientsTable() -->
+      </tbody>
+    </table>
+  </div>
+
+</div>

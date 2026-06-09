@@ -23,5 +23,5 @@
 
 ## Collaboration
 - Efe owns **backend**.
-- Emmanuel owns **security + frontend**.
-- Esiroghene owns **docs + design**.
+- Esiri owns **design + frontend**.
+- Emmanuel owns **docs + design**.

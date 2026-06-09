@@ -1,0 +1,80 @@
+/* ═══════════════════════════════════════════════════════════
+   OCML-DI · App Shell — Sidebar + Topbar
+═══════════════════════════════════════════════════════════ */
+
+/* ── APP SHELL ── */
+#page-app { flex-direction: row; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: 220px;
+  background: var(--navy-dark);
+  display: flex; flex-direction: column;
+  padding: 20px 0;
+  flex-shrink: 0;
+  min-height: 100vh;
+}
+.sb-brand {
+  display: flex; align-items: center; gap: 10px;
+  padding: 0 20px 24px;
+}
+.sb-brand-icon {
+  width: 34px; height: 34px;
+  background: var(--gold); border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.sb-brand-icon i { color: var(--navy-dark); font-size: 18px; }
+.sb-brand-name { font-size: 16px; font-weight: 600; color: #fff; }
+.sb-section {
+  font-size: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 1px;
+  color: rgba(255,255,255,0.25);
+  padding: 0 20px;
+  margin-bottom: 6px; margin-top: 16px;
+}
+.sb-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 20px;
+  font-size: 13px; color: rgba(255,255,255,0.55);
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  transition: all 0.15s;
+}
+.sb-item i { font-size: 18px; flex-shrink: 0; }
+.sb-item:hover { color: rgba(255,255,255,0.9); background: rgba(255,255,255,0.05); }
+.sb-item.active { color: #fff; background: rgba(255,255,255,0.08); border-left-color: var(--gold); }
+.sb-offline {
+  margin: auto 0 0;
+  padding: 16px 20px;
+}
+.sb-offline-dot {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 11px; color: rgba(255,255,255,0.4);
+}
+.sb-offline-dot::before {
+  content: '';
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--gold); flex-shrink: 0;
+}
+
+/* ── TOPBAR ── */
+.main { flex: 1; overflow-y: auto; background: var(--bg); }
+.topbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 28px; height: 56px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 10;
+}
+.topbar-title { font-size: 16px; font-weight: 600; color: var(--text); }
+.topbar-sub   { font-size: 12px; color: var(--muted); }
+.topbar-right { display: flex; align-items: center; gap: 12px; }
+.topbar-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--navy);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 600; color: #fff; cursor: pointer;
+}
+.topbar-icon { font-size: 20px; color: var(--muted); cursor: pointer; }
+.content { padding: 24px 28px; }

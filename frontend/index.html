@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OCML-DI — Clinician Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&family=Fraunces:ital,wght@0,300;0,600;1,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0e2f7e;--navy-dark:#0a1f55;--navy-light:#1a3f9e;
+  --gold:#f5c518;--gold-dark:#c49a0f;
+  --red:#e24b4a;--red-light:#fcebeb;--red-dark:#a32d2d;
+  --amber:#ba7517;--amber-light:#faeeda;
+  --teal:#1d9e75;--teal-light:#e1f5ee;
+  --blue-light:#e6f1fb;--blue-mid:#185fa5;
+  --green-light:#eaf3de;--green-mid:#3b6d11;
+  --bg:#f0f4fb;--surface:#fff;--border:#e0e4ef;
+  --text:#1c2b3a;--muted:#6b7a99;--hint:#9ba3b8;
+  --font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;--serif:'Fraunces',serif;
+  --radius:12px;--radius-sm:8px;--radius-lg:18px;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.5}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+.page{display:none;min-height:100vh}
+.page.active{display:flex}
+.screen{display:none}
+.screen.active{display:block}
+
+/* LOGIN */
+#page-login{background:var(--navy-dark);align-items:stretch}
+.login-left{flex:1;display:flex;flex-direction:column;justify-content:center;padding:60px;position:relative;overflow:hidden}
+.login-left::before{content:'';position:absolute;top:-120px;left:-80px;width:420px;height:420px;border-radius:50%;border:60px solid rgba(245,197,24,0.07);pointer-events:none}
+.login-left::after{content:'';position:absolute;bottom:-80px;right:-60px;width:280px;height:280px;border-radius:50%;border:40px solid rgba(255,255,255,0.04);pointer-events:none}
+.login-brand{display:flex;align-items:center;gap:12px;margin-bottom:48px}
+.login-brand-icon{width:44px;height:44px;background:var(--gold);border-radius:12px;display:flex;align-items:center;justify-content:center}
+.login-brand-icon i{color:var(--navy-dark);font-size:22px}
+.login-brand-name{font-size:22px;font-weight:600;color:#fff;letter-spacing:-0.3px}
+.login-brand-sub{font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:1px;margin-top:1px}
+.login-headline{font-family:var(--serif);font-size:38px;font-weight:300;color:#fff;line-height:1.2;margin-bottom:16px}
+.login-headline em{color:var(--gold);font-style:italic}
+.login-desc{font-size:14px;color:rgba(255,255,255,0.45);line-height:1.7;max-width:340px;margin-bottom:40px}
+.login-badges{display:flex;flex-direction:column;gap:10px}
+.login-badge{display:flex;align-items:center;gap:10px;font-size:13px;color:rgba(255,255,255,0.6)}
+.login-badge i{color:var(--gold);font-size:16px}
+.login-right{width:420px;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:40px}
+.login-card{width:100%;max-width:340px}
+.login-card h2{font-size:22px;font-weight:600;color:var(--text);margin-bottom:4px}
+.login-card p{font-size:13px;color:var(--muted);margin-bottom:32px}
+.form-group{margin-bottom:18px}
+.form-label{font-size:12px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px}
+.form-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 14px;font-size:14px;font-family:var(--font);color:var(--text);outline:none;transition:border-color 0.15s}
+.form-input:focus{border-color:var(--navy)}
+.login-btn{width:100%;background:var(--navy);color:#fff;border:none;border-radius:var(--radius-sm);padding:13px;font-size:14px;font-weight:600;font-family:var(--font);cursor:pointer;transition:background 0.15s;margin-top:8px}
+.login-btn:hover{background:var(--navy-light)}
+.login-offline{display:flex;align-items:center;gap:8px;margin-top:20px;padding:10px 14px;background:rgba(245,197,24,0.1);border-radius:var(--radius-sm);border:1px solid rgba(245,197,24,0.25)}
+.login-offline i{color:var(--gold-dark);font-size:14px}
+.login-offline span{font-size:12px;color:var(--amber)}
+
+/* APP SHELL */
+#page-app{flex-direction:row}
+.sidebar{width:220px;background:var(--navy-dark);display:flex;flex-direction:column;padding:20px 0;flex-shrink:0}
+.sb-brand{display:flex;align-items:center;gap:10px;padding:0 20px 24px}
+.sb-brand-icon{width:34px;height:34px;background:var(--gold);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-brand-icon i{color:var(--navy-dark);font-size:18px}
+.sb-brand-name{font-size:16px;font-weight:600;color:#fff}
+.sb-section{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.25);padding:0 20px;margin-bottom:6px;margin-top:16px}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 20px;font-size:13px;color:rgba(255,255,255,0.55);cursor:pointer;border-left:3px solid transparent;transition:all 0.15s}
+.sb-item i{font-size:18px;flex-shrink:0}
+.sb-item:hover{color:rgba(255,255,255,0.9);background:rgba(255,255,255,0.05)}
+.sb-item.active{color:#fff;background:rgba(255,255,255,0.08);border-left-color:var(--gold)}
+.sb-offline{margin:auto 0 0;padding:16px 20px}
+.sb-offline-dot{display:flex;align-items:center;gap:7px;font-size:11px;color:rgba(255,255,255,0.4)}
+.sb-offline-dot::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--gold);flex-shrink:0}
+.main{flex:1;overflow-y:auto;background:var(--bg)}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 28px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.topbar-title{font-size:16px;font-weight:600;color:var(--text)}
+.topbar-sub{font-size:12px;color:var(--muted)}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.topbar-avatar{width:32px;height:32px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff;cursor:pointer}
+.content{padding:24px 28px}
+.offline-bar{background:var(--gold);padding:6px 28px;display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;color:#7a5400;letter-spacing:0.5px}
+
+/* CARDS & METRICS */
+.metrics-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:20px}
+.m-card{border-radius:var(--radius);padding:14px 16px;display:flex;flex-direction:column;gap:2px}
+.m-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+.m-value{font-size:24px;font-weight:600;line-height:1}
+.m-sub{font-size:10px;margin-top:2px}
+.mc-navy{background:var(--navy)} .mc-navy .m-label{color:rgba(255,255,255,0.55)} .mc-navy .m-value{color:#fff} .mc-navy .m-sub{color:rgba(255,255,255,0.4)}
+.mc-red{background:var(--red-light)} .mc-red .m-label{color:var(--red-dark)} .mc-red .m-value{color:var(--red)} .mc-red .m-sub{color:var(--red-dark)}
+.mc-amber{background:var(--amber-light)} .mc-amber .m-label{color:#854f0b} .mc-amber .m-value{color:var(--amber)} .mc-amber .m-sub{color:#854f0b}
+.mc-teal{background:var(--teal-light)} .mc-teal .m-label{color:#0f6e56} .mc-teal .m-value{color:var(--teal)} .mc-teal .m-sub{color:#0f6e56}
+.mc-blue{background:var(--blue-light)} .mc-blue .m-label{color:var(--blue-mid)} .mc-blue .m-value{color:var(--blue-mid)} .mc-blue .m-sub{color:var(--blue-mid)}
+.mc-green{background:var(--green-light)} .mc-green .m-label{color:var(--green-mid)} .mc-green .m-value{color:#639922} .mc-green .m-sub{color:var(--green-mid)}
+.card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden}
+.card-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px}
+.card-title i{font-size:16px;color:var(--muted)}
+.card-action{font-size:12px;color:var(--navy);cursor:pointer;font-weight:500}
+.dash-row{display:grid;grid-template-columns:1fr 340px;gap:16px;margin-bottom:16px}
+
+/* ALERT ITEMS */
+.alert-item{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;cursor:pointer;transition:background 0.1s}
+.alert-item:last-child{border:none}
+.alert-item:hover{background:var(--bg)}
+.alert-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0}
+.alert-info{flex:1;min-width:0}
+.alert-name{font-size:13px;font-weight:600;color:var(--text)}
+.alert-detail{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.risk-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:0.3px;flex-shrink:0}
+.rb-critical{background:var(--red-light);color:var(--red-dark)}
+.rb-high{background:var(--amber-light);color:#854f0b}
+.rb-moderate{background:var(--blue-light);color:var(--blue-mid)}
+
+/* PATIENT TABLE */
+.pt-table{width:100%;border-collapse:collapse}
+.pt-table th{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.4px;color:var(--hint);padding:10px 18px;text-align:left;border-bottom:1px solid var(--border);background:var(--bg)}
+.pt-table td{padding:12px 18px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text)}
+.pt-table tr:last-child td{border:none}
+.pt-table tr:hover td{background:var(--bg);cursor:pointer}
+.status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}
+.sd-green{background:var(--teal)}
+.sd-red{background:var(--red)}
+.sd-amber{background:var(--amber)}
+
+/* PATIENTS TOOLBAR */
+.patients-toolbar{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.search-box{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 14px;flex:1;max-width:340px}
+.search-box i{color:var(--hint);font-size:16px}
+.search-box input{border:none;outline:none;font-family:var(--font);font-size:13px;color:var(--text);background:transparent;flex:1}
+.filter-btn{display:flex;align-items:center;gap:6px;padding:9px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-weight:500;color:var(--text);cursor:pointer}
+.add-btn{display:flex;align-items:center;gap:6px;padding:9px 16px;background:var(--navy);border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;color:#fff;cursor:pointer;margin-left:auto}
+
+/* PATIENT RECORD */
+.patient-layout{display:grid;grid-template-columns:300px 1fr;gap:16px}
+.patient-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:20px}
+.patient-avatar-lg{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:600;color:#fff;margin:0 auto 12px}
+.patient-name{font-size:17px;font-weight:600;text-align:center;color:var(--text);margin-bottom:2px}
+.patient-id{font-size:12px;color:var(--muted);text-align:center;font-family:var(--mono);margin-bottom:16px}
+.patient-meta{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--border);padding-top:16px}
+.pm-row{display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.pm-key{color:var(--muted)}
+.pm-val{font-weight:500;color:var(--text)}
+.qr-section{background:var(--navy-dark);border-radius:var(--radius);padding:20px;display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:14px}
+.qr-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.6px;color:rgba(255,255,255,0.45)}
+.qr-box{background:#fff;border-radius:var(--radius-sm);padding:10px}
+.qr-code-text{font-family:var(--mono);font-size:12px;color:rgba(255,255,255,0.5);text-align:center}
+.drug-check-form{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:20px;margin-bottom:16px}
+.drug-check-form h3{font-size:14px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.drug-check-form h3 i{color:var(--muted);font-size:17px}
+.drug-input-row{display:flex;gap:10px}
+.drug-input-row .form-input{flex:1}
+.check-btn{background:var(--navy);color:#fff;border:none;border-radius:var(--radius-sm);padding:11px 20px;font-size:14px;font-weight:600;font-family:var(--font);cursor:pointer;white-space:nowrap}
+.check-btn:hover{background:var(--navy-light)}
+.alert-result{border-radius:var(--radius);padding:16px 18px;margin-top:14px;display:none}
+.ar-critical{background:var(--red-light);border:1px solid #f09595}
+.ar-safe{background:var(--teal-light);border:1px solid #5dcaa5}
+.ar-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.ar-title{font-size:14px;font-weight:700}
+.ar-critical .ar-title{color:var(--red-dark)}
+.ar-safe .ar-title{color:#0f6e56}
+.ar-body{font-size:13px;line-height:1.6}
+.ar-critical .ar-body{color:var(--red-dark)}
+.ar-safe .ar-body{color:#0f6e56}
+.ar-rec{margin-top:8px;padding:10px 12px;background:rgba(255,255,255,0.6);border-radius:var(--radius-sm);font-size:12px}
+.ar-critical .ar-rec{color:#791f1f}
+.ar-safe .ar-rec{color:#085041}
+.conditions-grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.cond-tag{background:var(--red-light);color:var(--red-dark);font-size:12px;padding:4px 10px;border-radius:20px;font-weight:500}
+.med-tag{background:var(--blue-light);color:var(--blue-mid);font-size:12px;padding:4px 10px;border-radius:20px;font-weight:500}
+.allergy-tag{background:var(--amber-light);color:#854f0b;font-size:12px;padding:4px 10px;border-radius:20px;font-weight:500}
+
+/* USSD SIMULATOR */
+.ussd-layout{display:flex;gap:32px;align-items:flex-start;justify-content:center}
+.phone-device{background:#1a1a2e;border-radius:32px;border:8px solid #111;overflow:hidden;width:300px;flex-shrink:0}
+.phone-topbar{background:#111;height:28px;display:flex;align-items:center;justify-content:space-between;padding:0 16px}
+.phone-topbar span{font-size:10px;color:rgba(255,255,255,0.5);font-family:var(--mono)}
+.phone-screen{background:#0d1117;min-height:420px;padding:16px}
+.ussd-header-bar{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:10px 12px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.ussd-header-bar i{color:var(--gold);font-size:16px}
+.ussd-header-bar span{color:rgba(255,255,255,0.7);font-size:12px}
+.ussd-dial-code{color:var(--gold);font-size:15px;font-weight:500}
+.ussd-output{white-space:pre-line;color:#c9d1d9;font-size:13px;line-height:1.9;min-height:160px;font-family:var(--mono)}
+.ussd-output .ussd-warning{color:#ff6b6b;font-weight:500}
+.ussd-output .ussd-safe{color:#3fb950;font-weight:500}
+.ussd-output .ussd-prompt{color:var(--gold)}
+.ussd-input-row{display:flex;gap:8px;margin-top:12px;align-items:center}
+.ussd-text-input{flex:1;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:8px 10px;font-family:var(--mono);font-size:13px;color:#c9d1d9;outline:none}
+.ussd-text-input:focus{border-color:var(--gold)}
+.ussd-send-btn{background:var(--gold);border:none;border-radius:6px;padding:8px 14px;font-size:13px;font-weight:600;color:#7a5400;cursor:pointer;font-family:var(--mono)}
+.phone-keypad{background:#111;padding:12px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.key{background:#1a1a2e;border:none;border-radius:8px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:16px;color:#fff;cursor:pointer;transition:background 0.1s}
+.key:hover{background:#252540}
+.key:active{background:var(--navy)}
+.key-call{background:#1a5c1a;color:#3fb950}
+.key-end{background:#5c1a1a;color:#ff6b6b}
+.ussd-panel{flex:1;max-width:380px}
+.ussd-panel h3{font-size:16px;font-weight:600;margin-bottom:6px}
+.ussd-panel p{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6}
+.ussd-scenario{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:border-color 0.15s}
+.ussd-scenario:hover{border-color:var(--navy)}
+.ussd-scenario.selected{border-color:var(--navy);background:var(--blue-light)}
+.ussd-scenario-title{font-size:13px;font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.ussd-scenario-desc{font-size:12px;color:var(--muted)}
+.step-item{display:flex;gap:12px;margin-bottom:12px;align-items:flex-start}
+.step-num{width:22px;height:22px;border-radius:50%;background:var(--navy);color:#fff;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.step-text{font-size:13px;color:var(--text);line-height:1.5}
+.step-text strong{color:var(--navy)}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.8)}}
+.pulse-dot{width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block;animation:pulse 1.4s ease-in-out infinite;margin-right:6px}
+</style>
+</head>
+<body>
+<h2 class="sr-only">OCML-DI Clinician Portal — offline-first drug safety system with login, dashboard, patient records with QR wallets, and USSD simulator.</h2>
+
+<!-- LOGIN -->
+<div id="page-login" class="page active">
+  <div class="login-left">
+    <div class="login-brand">
+      <div class="login-brand-icon"><i class="ti ti-heartbeat" aria-hidden="true"></i></div>
+      <div>
+        <div class="login-brand-name">OCML-DI</div>
+        <div class="login-brand-sub">Offline clinical medical ledger</div>
+      </div>
+    </div>
+    <div class="login-headline">Safe prescribing,<br><em>even at zero bars.</em></div>
+    <div class="login-desc">Drug intelligence for African healthcare — built for clinics where the internet is a luxury, not a given.</div>
+    <div class="login-badges">
+      <div class="login-badge"><i class="ti ti-wifi-off" aria-hidden="true"></i>Works fully offline</div>
+      <div class="login-badge"><i class="ti ti-qrcode" aria-hidden="true"></i>QR medical wallet</div>
+      <div class="login-badge"><i class="ti ti-device-mobile" aria-hidden="true"></i>USSD access for feature phones</div>
+      <div class="login-badge"><i class="ti ti-shield-check" aria-hidden="true"></i>WHO-validated drug rules</div>
+    </div>
+  </div>
+  <div class="login-right">
+    <div class="login-card">
+      <h2>Clinician login</h2>
+      <p>Sign in to access the patient dashboard</p>
+      <div class="form-group">
+        <label class="form-label" for="username">Staff ID / Username</label>
+        <input class="form-input" id="username" type="text" placeholder="e.g. DR-EFE-001" value="DR-EFE-001">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <input class="form-input" id="password" type="password" placeholder="password" value="password">
+      </div>
+      <button class="login-btn" onclick="showApp()">Sign in to dashboard</button>
+      <div class="login-offline">
+        <i class="ti ti-database-off" aria-hidden="true"></i>
+        <span>Offline mode — local database active</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="page-app" class="page">
+  <div class="sidebar">
+    <div class="sb-brand">
+      <div class="sb-brand-icon"><i class="ti ti-heartbeat" aria-hidden="true"></i></div>
+      <div class="sb-brand-name">OCML-DI</div>
+    </div>
+    <div class="sb-section">Clinical</div>
+    <div class="sb-item active" onclick="showScreen('dashboard',this)"><i class="ti ti-layout-dashboard" aria-hidden="true"></i>Dashboard</div>
+    <div class="sb-item" onclick="showScreen('patients',this)"><i class="ti ti-users" aria-hidden="true"></i>Patients</div>
+    <div class="sb-item" onclick="showScreen('patient-record',this)"><i class="ti ti-file-medical" aria-hidden="true"></i>Patient record</div>
+    <div class="sb-section">Tools</div>
+    <div class="sb-item" onclick="showScreen('ussd',this)"><i class="ti ti-device-mobile" aria-hidden="true"></i>USSD simulator</div>
+    <div class="sb-item"><i class="ti ti-qrcode" aria-hidden="true"></i>QR wallets</div>
+    <div class="sb-item"><i class="ti ti-shield-check" aria-hidden="true"></i>Audit log</div>
+    <div class="sb-offline"><div class="sb-offline-dot">Offline mode active</div></div>
+  </div>
+  <div class="main">
+    <div class="offline-bar">
+      <i class="ti ti-wifi-off" aria-hidden="true"></i>
+      Offline mode — last synced 2h ago &nbsp;·&nbsp; central.ocml-di.org unreachable
+    </div>
+    <div class="topbar">
+      <div>
+        <div class="topbar-title" id="topbar-title">Dashboard</div>
+        <div class="topbar-sub">Friday 04 June 2026 &nbsp;·&nbsp; Kano General Clinic</div>
+      </div>
+      <div class="topbar-right">
+        <i class="ti ti-bell" style="font-size:20px;color:var(--muted);cursor:pointer" aria-label="Notifications"></i>
+        <div class="topbar-avatar" title="Dr Efe Ikharo">EI</div>
+        <i class="ti ti-logout" style="font-size:18px;color:var(--muted);cursor:pointer" aria-label="Sign out" onclick="showLogin()"></i>
+      </div>
+    </div>
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div id="screen-dashboard" class="screen active">
+        <div class="metrics-grid">
+          <div class="m-card mc-navy"><div class="m-label">Patients</div><div class="m-value">1,245</div><div class="m-sub">registered</div></div>
+          <div class="m-card mc-red"><div class="m-label">Critical</div><div class="m-value">38</div><div class="m-sub"><span class="pulse-dot"></span>needs review</div></div>
+          <div class="m-card mc-amber"><div class="m-label">Pending</div><div class="m-value">12</div><div class="m-sub">awaiting MD</div></div>
+          <div class="m-card mc-teal"><div class="m-label">CHW syncs</div><div class="m-value">307</div><div class="m-sub">today</div></div>
+          <div class="m-card mc-blue"><div class="m-label">USSD checks</div><div class="m-value">4,512</div><div class="m-sub">total sessions</div></div>
+          <div class="m-card mc-green"><div class="m-label">QR wallets</div><div class="m-value">891</div><div class="m-sub">issued</div></div>
+        </div>
+        <div class="dash-row">
+          <div class="card">
+            <div class="card-head">
+              <div class="card-title"><span class="pulse-dot"></span><i class="ti ti-alert-triangle" aria-hidden="true"></i>Critical drug alerts</div>
+              <div class="card-action">View all</div>
+            </div>
+            <div class="alert-item" onclick="showScreen('patient-record',null,'amina')">
+              <div class="alert-avatar" style="background:#e24b4a;color:#fff">AB</div>
+              <div class="alert-info"><div class="alert-name">Amina Bello</div><div class="alert-detail">Ibuprofen + Kidney disease · Risk 9/10</div></div>
+              <span class="risk-badge rb-critical">Critical</span>
+            </div>
+            <div class="alert-item" onclick="showScreen('patient-record',null,'kofi')">
+              <div class="alert-avatar" style="background:#ba7517;color:#fff">KA</div>
+              <div class="alert-info"><div class="alert-name">Kofi Asante</div><div class="alert-detail">Efavirenz + Artemether-lumefantrine · Risk 8/10</div></div>
+              <span class="risk-badge rb-critical">Critical</span>
+            </div>
+            <div class="alert-item">
+              <div class="alert-avatar" style="background:#185fa5;color:#fff">FN</div>
+              <div class="alert-info"><div class="alert-name">Fatima Nkosi</div><div class="alert-detail">Rifampicin + OCP · Contraceptive failure risk</div></div>
+              <span class="risk-badge rb-critical">Critical</span>
+            </div>
+            <div class="alert-item">
+              <div class="alert-avatar" style="background:#0f6e56;color:#fff">EO</div>
+              <div class="alert-info"><div class="alert-name">Emmanuel Osei</div><div class="alert-detail">Digoxin + Furosemide · Hypokalaemia risk</div></div>
+              <span class="risk-badge rb-high">High</span>
+            </div>
+            <div class="alert-item">
+              <div class="alert-avatar" style="background:#533ab7;color:#fff">NC</div>
+              <div class="alert-info"><div class="alert-name">Ngozi Chukwu</div><div class="alert-detail">Quinine + Amiodarone · QT prolongation</div></div>
+              <span class="risk-badge rb-high">High</span>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div class="card">
+              <div class="card-head">
+                <div class="card-title"><i class="ti ti-chart-line" aria-hidden="true"></i>7-day USSD activity</div>
+                <div style="font-size:11px;color:var(--teal);font-weight:600">+18% this week</div>
+              </div>
+              <div style="padding:14px 18px"><canvas id="trendChart" height="80" role="img" aria-label="USSD activity trend, upward over 7 days"></canvas></div>
+            </div>
+            <div class="card" style="background:var(--navy-dark);border-color:var(--navy)">
+              <div class="card-head" style="border-color:rgba(255,255,255,0.1)">
+                <div class="card-title" style="color:#fff"><i class="ti ti-device-mobile" aria-hidden="true"></i>USSD channel</div>
+                <div style="font-size:11px;color:#3fb950;display:flex;align-items:center;gap:5px"><span style="width:6px;height:6px;border-radius:50%;background:#3fb950;display:inline-block"></span>Live</div>
+              </div>
+              <div style="padding:14px 18px">
+                <div style="font-family:var(--mono);font-size:22px;font-weight:500;color:var(--gold);margin-bottom:12px">*384*52591#</div>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <div style="display:flex;justify-content:space-between;font-size:12px;border-top:1px solid rgba(255,255,255,0.1);padding-top:6px"><span style="color:rgba(255,255,255,0.4)">Last check</span><span style="color:rgba(255,255,255,0.8)">2 mins ago</span></div>
+                  <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:rgba(255,255,255,0.4)">Network</span><span style="color:rgba(255,255,255,0.8)">GSM 2G</span></div>
+                  <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:rgba(255,255,255,0.4)">Sessions today</span><span style="color:rgba(255,255,255,0.8)">147</span></div>
+                </div>
+                <button onclick="showScreen('ussd',null)" style="width:100%;margin-top:14px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:var(--radius-sm);padding:9px;font-size:12px;color:rgba(255,255,255,0.7);cursor:pointer;font-family:var(--font)">Open USSD simulator →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title"><i class="ti ti-users" aria-hidden="true"></i>Recent patients</div>
+            <div class="card-action" onclick="showScreen('patients',null)">View all patients</div>
+          </div>
+          <table class="pt-table" aria-label="Recent patients">
+            <thead><tr><th>Patient</th><th>ID</th><th>Condition</th><th>Last visit</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              <tr onclick="showScreen('patient-record',null,'amina')"><td><strong>Amina Bello</strong></td><td style="font-family:var(--mono);color:var(--muted)">PAT-0041</td><td>Chronic kidney disease</td><td>Today, 09:14</td><td><span class="status-dot sd-red"></span>Alert</td><td style="color:var(--navy)">Review →</td></tr>
+              <tr onclick="showScreen('patient-record',null,'kofi')"><td><strong>Kofi Asante</strong></td><td style="font-family:var(--mono);color:var(--muted)">PAT-0039</td><td>HIV, Malaria co-infection</td><td>Today, 08:55</td><td><span class="status-dot sd-red"></span>Alert</td><td style="color:var(--navy)">Review →</td></tr>
+              <tr><td><strong>Fatima Nkosi</strong></td><td style="font-family:var(--mono);color:var(--muted)">PAT-0037</td><td>Tuberculosis</td><td>Yesterday</td><td><span class="status-dot sd-amber"></span>Pending</td><td style="color:var(--navy)">Review →</td></tr>
+              <tr><td><strong>Emmanuel Osei</strong></td><td style="font-family:var(--mono);color:var(--muted)">PAT-0034</td><td>Heart failure, Hypertension</td><td>Yesterday</td><td><span class="status-dot sd-amber"></span>Pending</td><td style="color:var(--navy)">Review →</td></tr>
+              <tr><td><strong>Adaeze Okafor</strong></td><td style="font-family:var(--mono);color:var(--muted)">PAT-0031</td><td>Type 2 diabetes</td><td>2 days ago</td><td><span class="status-dot sd-green"></span>Safe</td><td style="color:var(--navy)">View →</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PATIENTS LIST -->
+      <div id="screen-patients" class="screen">
+        <div class="patients-toolbar">
+          <div class="search-box"><i class="ti ti-search" aria-hidden="true"></i><input type="text" placeholder="Search by name, ID, condition…" aria-label="Search patients"></div>
+          <button class="filter-btn"><i class="ti ti-filter" aria-hidden="true"></i>Filter</button>
+          <button class="add-btn" style="margin-left:auto"><i class="ti ti-plus" aria-hidden="true"></i>Add patient</button>
+        </div>
+        <div class="card">
+          <table class="pt-table" aria-label="All patients">
+            <thead><tr><th>Patient</th><th>ID</th><th>Age</th><th>Conditions</th><th>Medications</th><th>Last visit</th><th>Status</th><th></th></tr></thead>
+            <tbody id="patients-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PATIENT RECORD -->
+      <div id="screen-patient-record" class="screen">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+          <button onclick="showScreen('dashboard',null)" style="background:none;border:none;cursor:pointer;color:var(--muted);display:flex;align-items:center;gap:4px;font-size:13px;font-family:var(--font)"><i class="ti ti-arrow-left" style="font-size:16px"></i>Back</button>
+          <span style="color:var(--hint)">·</span>
+          <span id="record-breadcrumb" style="font-size:13px;color:var(--muted)">Patient record</span>
+        </div>
+        <div class="patient-layout">
+          <div>
+            <div class="patient-card">
+              <div class="patient-avatar-lg" id="rec-avatar" style="background:var(--navy)">AB</div>
+              <div class="patient-name" id="rec-name">Amina Bello</div>
+              <div class="patient-id" id="rec-id">PAT-0041</div>
+              <div class="patient-meta">
+                <div class="pm-row"><span class="pm-key">Age</span><span class="pm-val" id="rec-age">38</span></div>
+                <div class="pm-row"><span class="pm-key">Gender</span><span class="pm-val" id="rec-gender">Female</span></div>
+                <div class="pm-row"><span class="pm-key">Phone</span><span class="pm-val" id="rec-phone">+234 802 xxx xxxx</span></div>
+                <div class="pm-row"><span class="pm-key">Facility</span><span class="pm-val">Kano General</span></div>
+                <div class="pm-row"><span class="pm-key">Last visit</span><span class="pm-val" id="rec-visit">Today, 09:14</span></div>
+              </div>
+              <div style="margin-top:14px">
+                <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:6px">Conditions</div>
+                <div class="conditions-grid" id="rec-conditions"></div>
+                <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin:12px 0 6px">Current medications</div>
+                <div class="conditions-grid" id="rec-medications"></div>
+                <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin:12px 0 6px">Allergies</div>
+                <div class="conditions-grid" id="rec-allergies"></div>
+              </div>
+            </div>
+            <div class="qr-section">
+              <div class="qr-title"><i class="ti ti-qrcode" aria-hidden="true" style="font-size:13px;margin-right:5px"></i>QR medical wallet</div>
+              <div class="qr-box" id="qr-container"></div>
+              <div class="qr-code-text" id="rec-qr-label">PAT-0041 · Scan to load record</div>
+            </div>
+          </div>
+          <div>
+            <div class="drug-check-form">
+              <h3><i class="ti ti-pill" aria-hidden="true"></i>Drug interaction check</h3>
+              <div class="drug-input-row">
+                <input class="form-input" id="drug-input" type="text" placeholder="Enter drug name (e.g. Ibuprofen, Quinine…)" onkeydown="if(event.key==='Enter')checkDrug()">
+                <button class="check-btn" onclick="checkDrug()">Check now</button>
+              </div>
+              <div class="alert-result" id="alert-result"></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><div class="card-title"><i class="ti ti-history" aria-hidden="true"></i>Prescription history</div></div>
+              <table class="pt-table" aria-label="Prescription history">
+                <thead><tr><th>Drug</th><th>Prescribed by</th><th>Date</th><th>Status</th></tr></thead>
+                <tbody id="rec-history"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- USSD SIMULATOR -->
+      <div id="screen-ussd" class="screen">
+        <div class="ussd-layout">
+          <div class="phone-device">
+            <div class="phone-topbar">
+              <span>MTN NG</span><span>●●●●○ GSM</span><span>82%</span>
+            </div>
+            <div class="phone-screen">
+              <div class="ussd-header-bar">
+                <i class="ti ti-device-mobile" aria-hidden="true"></i>
+                <span>USSD &nbsp;·&nbsp; <span class="ussd-dial-code">*384*52591#</span></span>
+              </div>
+              <div class="ussd-output" id="ussd-output"><span style="color:rgba(200,200,200,0.35)">Press green dial button to begin…</span></div>
+              <div class="ussd-input-row">
+                <input class="ussd-text-input" id="ussd-input" placeholder="Enter response…" onkeydown="if(event.key==='Enter')ussdSend()" aria-label="USSD response input">
+                <button class="ussd-send-btn" onclick="ussdSend()">Send</button>
+              </div>
+            </div>
+            <div class="phone-keypad">
+              <button class="key" onclick="ussdKey('1')">1</button>
+              <button class="key" onclick="ussdKey('2')">2</button>
+              <button class="key" onclick="ussdKey('3')">3</button>
+              <button class="key" onclick="ussdKey('4')">4</button>
+              <button class="key" onclick="ussdKey('5')">5</button>
+              <button class="key" onclick="ussdKey('6')">6</button>
+              <button class="key" onclick="ussdKey('7')">7</button>
+              <button class="key" onclick="ussdKey('8')">8</button>
+              <button class="key" onclick="ussdKey('9')">9</button>
+              <button class="key key-call" onclick="ussdDial()">&#x260E;</button>
+              <button class="key" onclick="ussdKey('0')">0</button>
+              <button class="key key-end" onclick="ussdReset()">&#x2715;</button>
+            </div>
+          </div>
+          <div class="ussd-panel">
+            <h3>USSD drug safety simulator</h3>
+            <p>Simulate the exact experience on a basic feature phone — no internet, no smartphone. Dial in and test the AI risk engine over GSM 2G.</p>
+            <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:8px">Demo scenarios</div>
+            <div class="ussd-scenario selected" id="scenario-1" onclick="selectScenario(1)">
+              <div class="ussd-scenario-title"><span class="risk-badge rb-critical">Critical</span>NSAID + Kidney disease</div>
+              <div class="ussd-scenario-desc">Ibuprofen prescribed to a CKD patient — the pitch demo case</div>
+            </div>
+            <div class="ussd-scenario" id="scenario-2" onclick="selectScenario(2)">
+              <div class="ussd-scenario-title"><span class="risk-badge rb-critical">Critical</span>ARV + Antimalarial</div>
+              <div class="ussd-scenario-desc">Efavirenz + Artemether-lumefantrine interaction</div>
+            </div>
+            <div class="ussd-scenario" id="scenario-3" onclick="selectScenario(3)">
+              <div class="ussd-scenario-title"><span class="risk-badge rb-critical">Critical</span>Rifampicin + OCP</div>
+              <div class="ussd-scenario-desc">TB treatment destroying contraceptive efficacy</div>
+            </div>
+            <div class="ussd-scenario" id="scenario-4" onclick="selectScenario(4)">
+              <div class="ussd-scenario-title"><span class="risk-badge rb-moderate">Safe</span>Paracetamol check</div>
+              <div class="ussd-scenario-desc">Safe drug — system clears with no interaction</div>
+            </div>
+            <div style="margin-top:20px">
+              <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:10px">How to run the demo</div>
+              <div class="step-item"><div class="step-num">1</div><div class="step-text">Press <strong>green dial button</strong> to connect</div></div>
+              <div class="step-item"><div class="step-num">2</div><div class="step-text">Press <strong>1</strong> for drug safety check</div></div>
+              <div class="step-item"><div class="step-num">3</div><div class="step-text">Type the drug name, press <strong>Send</strong></div></div>
+              <div class="step-item"><div class="step-num">4</div><div class="step-text">Risk engine returns instant alert</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const patients={
+  amina:{id:'PAT-0041',name:'Amina Bello',initials:'AB',color:'#e24b4a',age:38,gender:'Female',phone:'+234 802 xxx xxxx',visit:'Today, 09:14',conditions:['Chronic kidney disease','Hypertension'],medications:['Lisinopril 10mg','Furosemide 40mg'],allergies:['Penicillin'],history:[{drug:'Ibuprofen',by:'Dr E. Ikharo',date:'Today',status:'Blocked — Critical'},{drug:'Paracetamol 500mg',by:'Dr A. Musa',date:'Jun 01',status:'Safe'},{drug:'Amlodipine 5mg',by:'Dr A. Musa',date:'May 20',status:'Safe'}]},
+  kofi:{id:'PAT-0039',name:'Kofi Asante',initials:'KA',color:'#ba7517',age:31,gender:'Male',phone:'+233 244 xxx xxx',visit:'Today, 08:55',conditions:['HIV positive','Malaria'],medications:['Efavirenz 600mg','TDF/3TC'],allergies:['Sulphonamides'],history:[{drug:'Artemether-lumefantrine',by:'Dr E. Ikharo',date:'Today',status:'Blocked — Critical'},{drug:'Cotrimoxazole',by:'Dr K. Mensah',date:'May 28',status:'Moderate — review'}]}
+};
+const allPatients=[
+  {id:'PAT-0041',name:'Amina Bello',age:38,conditions:'CKD, Hypertension',meds:'Lisinopril, Furosemide',visit:'Today',status:'alert',key:'amina'},
+  {id:'PAT-0039',name:'Kofi Asante',age:31,conditions:'HIV, Malaria',meds:'Efavirenz, TDF/3TC',visit:'Today',status:'alert',key:'kofi'},
+  {id:'PAT-0037',name:'Fatima Nkosi',age:26,conditions:'Tuberculosis',meds:'Rifampicin, INH, PZA',visit:'Yesterday',status:'pending'},
+  {id:'PAT-0034',name:'Emmanuel Osei',age:67,conditions:'Heart failure, HTN',meds:'Digoxin, Furosemide',visit:'Yesterday',status:'pending'},
+  {id:'PAT-0031',name:'Adaeze Okafor',age:44,conditions:'Type 2 diabetes',meds:'Metformin 500mg',visit:'2 days ago',status:'safe'},
+  {id:'PAT-0028',name:'Chidi Eze',age:55,conditions:'Epilepsy',meds:'Phenobarbitone 60mg',visit:'3 days ago',status:'safe'},
+  {id:'PAT-0025',name:'Blessing Dada',age:22,conditions:'Malaria, Pregnancy',meds:'None current',visit:'4 days ago',status:'pending'},
+  {id:'PAT-0022',name:'Yusuf Ibrahim',age:48,conditions:'Hypertension',meds:'Amlodipine 10mg',visit:'5 days ago',status:'safe'},
+];
+const drugRules={
+  ibuprofen:{level:'critical',title:'CRITICAL: Drug-condition interaction detected',body:'Ibuprofen (NSAID) is contraindicated in chronic kidney disease. NSAIDs inhibit prostaglandin synthesis, reducing renal blood flow and GFR — risking acute kidney injury in CKD patients.',rec:'Use paracetamol instead. Refer for a renal-safe analgesic plan. Do not dispense.',score:'9/10'},
+  diclofenac:{level:'critical',title:'CRITICAL: NSAID contraindicated in kidney disease',body:'Diclofenac is an NSAID and carries the same renal contraindication as ibuprofen.',rec:'Use paracetamol. Avoid all NSAIDs in CKD patients.',score:'9/10'},
+  'artemether-lumefantrine':{level:'critical',title:'CRITICAL: ARV–antimalarial interaction',body:'Efavirenz reduces artemether-lumefantrine levels by up to 75% via CYP3A4 induction. Malaria treatment will fail at standard doses.',rec:'Switch to artesunate-amodiaquine, or use double-dose AL per WHO co-infection guidelines. Refer to senior clinician.',score:'8/10'},
+  coartem:{level:'critical',title:'CRITICAL: ARV–antimalarial interaction',body:'Coartem (artemether-lumefantrine) levels are dramatically reduced by efavirenz.',rec:'Use artesunate-amodiaquine as alternative.',score:'8/10'},
+  quinine:{level:'high',title:'HIGH RISK: Cardiac risk — QT prolongation',body:'Quinine prolongs the QT interval. Review current medications for additive cardiac risk before prescribing.',rec:'ECG monitoring required. Prefer artemisinin-based therapy where possible.',score:'7/10'},
+  paracetamol:{level:'safe',title:'Safe — no interactions detected',body:'Paracetamol is the recommended analgesic for this patient. No clinically significant interactions found with current medications or conditions.',rec:'Standard dosing: 500–1000mg every 4–6 hours as needed. Maximum 4g/day.',score:'1/10'},
+  acetaminophen:{level:'safe',title:'Safe — no interactions detected',body:'Acetaminophen (paracetamol) is safe for this patient.',rec:'Standard dosing. Monitor liver function with long-term use.',score:'1/10'},
+};
+
+function showApp(){
+  document.getElementById('page-login').classList.remove('active');
+  document.getElementById('page-app').classList.add('active');
+  buildPatientsTable();
+  setTimeout(buildTrendChart,100);
+}
+function showLogin(){
+  document.getElementById('page-app').classList.remove('active');
+  document.getElementById('page-login').classList.add('active');
+}
+function showScreen(name,el,patientKey){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));
+  if(el) el.classList.add('active');
+  const titles={dashboard:'Dashboard','patient-record':'Patient record',patients:'Patients',ussd:'USSD simulator'};
+  document.getElementById('topbar-title').textContent=titles[name]||name;
+  if(name==='patient-record') loadPatientRecord(patientKey||'amina');
+  if(name==='ussd') resetUssd();
+}
+function buildPatientsTable(){
+  document.getElementById('patients-tbody').innerHTML=allPatients.map(p=>`<tr ${p.key?`onclick="showScreen('patient-record',null,'${p.key}')"`:''}>
+    <td><strong>${p.name}</strong></td><td style="font-family:var(--mono);color:var(--muted)">${p.id}</td>
+    <td>${p.age}</td><td>${p.conditions}</td><td>${p.meds}</td><td>${p.visit}</td>
+    <td><span class="status-dot ${p.status==='alert'?'sd-red':p.status==='pending'?'sd-amber':'sd-green'}"></span>${p.status==='alert'?'Alert':p.status==='pending'?'Pending':'Safe'}</td>
+    <td style="color:var(--navy)">${p.key?'Review →':'View →'}</td></tr>`).join('');
+}
+function loadPatientRecord(key){
+  const p=patients[key]||patients.amina;
+  document.getElementById('rec-avatar').textContent=p.initials;
+  document.getElementById('rec-avatar').style.background=p.color;
+  document.getElementById('rec-name').textContent=p.name;
+  document.getElementById('rec-id').textContent=p.id;
+  document.getElementById('rec-age').textContent=p.age;
+  document.getElementById('rec-gender').textContent=p.gender;
+  document.getElementById('rec-phone').textContent=p.phone;
+  document.getElementById('rec-visit').textContent=p.visit;
+  document.getElementById('record-breadcrumb').textContent=p.name;
+  document.getElementById('rec-conditions').innerHTML=p.conditions.map(c=>`<span class="cond-tag">${c}</span>`).join('');
+  document.getElementById('rec-medications').innerHTML=p.medications.map(m=>`<span class="med-tag">${m}</span>`).join('');
+  document.getElementById('rec-allergies').innerHTML=p.allergies.map(a=>`<span class="allergy-tag">${a}</span>`).join('');
+  document.getElementById('rec-history').innerHTML=p.history.map(h=>`<tr><td>${h.drug}</td><td>${h.by}</td><td>${h.date}</td><td>${h.status}</td></tr>`).join('');
+  document.getElementById('rec-qr-label').textContent=`${p.id} · Scan to load record`;
+  document.getElementById('alert-result').style.display='none';
+  document.getElementById('drug-input').value='';
+  const qrDiv=document.getElementById('qr-container');
+  qrDiv.innerHTML='';
+  try{new QRCode(qrDiv,{text:JSON.stringify({id:p.id,name:p.name,conditions:p.conditions,medications:p.medications,allergies:p.allergies}),width:110,height:110,colorDark:'#0e2f7e',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.H});}
+  catch(e){qrDiv.innerHTML='<div style="width:110px;height:110px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#666">QR unavailable</div>';}
+}
+function checkDrug(){
+  const drug=document.getElementById('drug-input').value.trim().toLowerCase();
+  const res=document.getElementById('alert-result');
+  if(!drug) return;
+  const rule=drugRules[drug]||{level:'moderate',title:'Interaction data limited',body:`No specific rule found for "${drug}" in the current rule set. Manual clinical review recommended.`,rec:'Check against WHO formulary. Do not dispense without clinical assessment.',score:'?/10'};
+  const isSafe=rule.level==='safe';
+  res.className='alert-result '+(isSafe?'ar-safe':'ar-critical');
+  res.innerHTML=`<div class="ar-header"><i class="ti ${isSafe?'ti-circle-check':'ti-alert-triangle'}" style="font-size:22px;color:${isSafe?'var(--teal)':'var(--red)'}"></i><div><div class="ar-title">${rule.title}</div><div style="font-size:11px;margin-top:2px;color:${isSafe?'#0f6e56':'var(--red-dark)'}">Risk score: ${rule.score} &nbsp;·&nbsp; Source: WHO EML + OCML-DI Africa rules</div></div></div><div class="ar-body">${rule.body}<div class="ar-rec"><strong>Recommendation:</strong> ${rule.rec}</div></div>`;
+  res.style.display='block';
+}
+function buildTrendChart(){
+  const ctx=document.getElementById('trendChart');
+  if(!ctx) return;
+  new Chart(ctx,{type:'line',data:{labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],datasets:[{data:[480,510,530,610,590,680,720],borderColor:'#1d9e75',borderWidth:2,pointRadius:0,tension:0.4,fill:true,backgroundColor:'rgba(29,158,117,0.08)'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:true,grid:{display:false},ticks:{font:{size:10},color:'#9ba3b8'}},y:{display:false,min:400,max:780}},animation:{duration:800}}});
+}
+
+// USSD
+let ussdState=0,currentScenario=1;
+const ussdResponses={
+  ibuprofen:`END CRITICAL RISK ALERT\n\nDrug: Ibuprofen\nRisk: CRITICAL (9/10)\n\nNSAIDs CONTRAINDICATED\nin kidney disease patients.\nRisk of acute renal failure.\n\nDO NOT DISPENSE.\n\nAlternative: Paracetamol\n\n[OCML-DI + WHO EML rules]`,
+  'artemether-lumefantrine':`END CRITICAL ALERT\n\nDrug: Artemether-lumefantrine\nRisk: CRITICAL (8/10)\n\nEfavirenz reduces drug\nlevels by 75%. Malaria\ntreatment WILL FAIL.\n\nUse: Artesunate-amodiaquine\n\nRefer to senior clinician.\n\n[OCML-DI + Liverpool DDI]`,
+  rifampicin:`END CRITICAL ALERT\n\nDrug: Rifampicin\nRisk: CRITICAL (9/10)\n\nRifampicin makes oral\ncontraceptives ineffective.\nUnintended pregnancy risk.\n\nSwitch to copper IUD\nor barrier methods.\n\nCounsel patient NOW.\n\n[OCML-DI + WHO EML rules]`,
+  paracetamol:`END SAFE — NO INTERACTION\n\nDrug: Paracetamol\nRisk: LOW (1/10)\n\nNo interactions found.\nSafe to dispense.\n\nDosing: 500–1000mg\nevery 4–6 hours.\nMax 4g per day.\n\n[OCML-DI + WHO EML rules]`,
+};
+const scenarioDrugs={1:'ibuprofen',2:'artemether-lumefantrine',3:'rifampicin',4:'paracetamol'};
+function selectScenario(n){
+  currentScenario=n;
+  document.querySelectorAll('.ussd-scenario').forEach((s,i)=>s.classList.toggle('selected',i===n-1));
+  resetUssd();
+}
+function resetUssd(){ussdState=0;document.getElementById('ussd-output').innerHTML='<span style="color:rgba(200,200,200,0.35)">Press green dial button to begin…</span>';document.getElementById('ussd-input').value='';}
+function ussdDial(){if(ussdState!==0)return;ussdState=1;setUssdOut(`CON Welcome to OCML-DI\nDrug Safety Check System\n\nPowered by WHO guidelines\n+ Africa Priority Rules\n\n1. Check drug interaction\n2. Patient lookup\n3. Adverse event report\n\n<span class="ussd-prompt">Reply with option number:</span>`);}
+function ussdSend(){const v=document.getElementById('ussd-input').value.trim();if(!v)return;document.getElementById('ussd-input').value='';handleUssd(v);}
+function ussdKey(k){document.getElementById('ussd-input').value+=k;}
+function handleUssd(input){
+  if(ussdState===0){ussdDial();return;}
+  if(ussdState===1){
+    if(input==='1'){ussdState=2;setUssdOut(`CON Drug interaction check\n\nEnter drug name:\n(e.g. Ibuprofen, Quinine,\nCoartem)\n\n<span class="ussd-prompt">Type name and press Send:</span>`);}
+    else if(input==='2'){setUssdOut(`END Patient lookup requires\nclinic network access.\n\nCurrently offline.\nUse QR wallet scan\nat clinic terminal.`);}
+    else{setUssdOut(`END Invalid option.\nDial *384*52591# to restart.\n\n[OCML-DI]`);}
+    return;
+  }
+  if(ussdState===2){
+    ussdState=3;
+    const drug=input.toLowerCase().replace(/[^a-z0-9-]/g,'');
+    const resp=ussdResponses[drug]||ussdResponses[scenarioDrugs[currentScenario]]||`END DRUG CHECK: ${input}\n\nNo specific rule found.\nManual clinical review\nrecommended.\n\n[OCML-DI v1.0]`;
+    const colored=resp.replace('CRITICAL RISK ALERT','<span class="ussd-warning">CRITICAL RISK ALERT</span>').replace('CRITICAL ALERT','<span class="ussd-warning">CRITICAL ALERT</span>').replace('SAFE — NO INTERACTION','<span class="ussd-safe">SAFE — NO INTERACTION</span>');
+    setUssdOut(colored);
+  }
+}
+function setUssdOut(html){document.getElementById('ussd-output').innerHTML=html;}
+function ussdReset(){resetUssd();}
+</script>
+</body>
+</html>

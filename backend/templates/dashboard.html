@@ -31,7 +31,10 @@
         </tr>
         {% for r in reviews %}
         <tr>
-            <td>{{ r.patient_name }}</td>
+            <td>
+    <a href="/clinician/patient/{{ r.patient_id }}">{{ r.patient_name }}</a>
+</td>
+
             <td>{{ r.proposed_drug }}</td>
             <td class="{{ r.risk_level|lower }}">{{ r.risk_level }}</td>
             <td>{{ r.risk_score }}/10</td>

@@ -1,0 +1,119 @@
+<!-- ═══════════════════════════════════════════════════════════
+     OCML-DI · Login Page
+     File: pages/login.html
+     Include inside index.html as #page-login
+═══════════════════════════════════════════════════════════ -->
+
+<style>
+#page-login { background: var(--navy-dark); align-items: stretch; }
+
+.login-left {
+  flex: 1; display: flex; flex-direction: column;
+  justify-content: center; padding: 60px;
+  position: relative; overflow: hidden;
+}
+.login-left::before {
+  content: ''; position: absolute; top: -120px; left: -80px;
+  width: 420px; height: 420px; border-radius: 50%;
+  border: 60px solid rgba(245,197,24,0.07); pointer-events: none;
+}
+.login-left::after {
+  content: ''; position: absolute; bottom: -80px; right: -60px;
+  width: 280px; height: 280px; border-radius: 50%;
+  border: 40px solid rgba(255,255,255,0.04); pointer-events: none;
+}
+.login-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 48px; }
+.login-brand-icon {
+  width: 44px; height: 44px; background: var(--gold);
+  border-radius: 12px; display: flex; align-items: center; justify-content: center;
+}
+.login-brand-icon i { color: var(--navy-dark); font-size: 22px; }
+.login-brand-name { font-size: 22px; font-weight: 600; color: #fff; letter-spacing: -0.3px; }
+.login-brand-sub  { font-size: 10px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 1px; margin-top: 1px; }
+.login-headline   { font-family: var(--serif); font-size: 38px; font-weight: 300; color: #fff; line-height: 1.2; margin-bottom: 16px; }
+.login-headline em{ color: var(--gold); font-style: italic; }
+.login-desc       { font-size: 14px; color: rgba(255,255,255,0.45); line-height: 1.7; max-width: 340px; margin-bottom: 40px; }
+.login-badges     { display: flex; flex-direction: column; gap: 10px; }
+.login-badge      { display: flex; align-items: center; gap: 10px; font-size: 13px; color: rgba(255,255,255,0.6); }
+.login-badge i    { color: var(--gold); font-size: 16px; }
+
+.login-right {
+  width: 420px; background: var(--bg);
+  display: flex; align-items: center; justify-content: center; padding: 40px;
+}
+.login-card { width: 100%; max-width: 340px; }
+.login-card h2 { font-size: 22px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.login-card p  { font-size: 13px; color: var(--muted); margin-bottom: 32px; }
+.login-btn {
+  width: 100%; background: var(--navy); color: #fff; border: none;
+  border-radius: var(--radius-sm); padding: 13px;
+  font-size: 14px; font-weight: 600; font-family: var(--font);
+  cursor: pointer; transition: background 0.15s; margin-top: 8px;
+}
+.login-btn:hover { background: var(--navy-light); }
+.login-error {
+  background: var(--red-light); border: 1px solid #f09595;
+  border-radius: var(--radius-sm); padding: 10px 14px;
+  font-size: 13px; color: var(--red-dark); margin-top: 12px; display: none;
+}
+.login-offline {
+  display: flex; align-items: center; gap: 8px;
+  margin-top: 20px; padding: 10px 14px;
+  background: rgba(245,197,24,0.1); border-radius: var(--radius-sm);
+  border: 1px solid rgba(245,197,24,0.25);
+}
+.login-offline i    { color: var(--gold-dark); font-size: 14px; }
+.login-offline span { font-size: 12px; color: var(--amber); }
+</style>
+
+<div id="page-login" class="page">
+  <div class="login-left">
+    <div class="login-brand">
+      <div class="login-brand-icon"><i class="ti ti-heartbeat" aria-hidden="true"></i></div>
+      <div>
+        <div class="login-brand-name">OCML-DI</div>
+        <div class="login-brand-sub">Offline clinical medical ledger</div>
+      </div>
+    </div>
+    <div class="login-headline">Safe prescribing,<br><em>even at zero bars.</em></div>
+    <div class="login-desc">
+      Drug intelligence for African healthcare — built for clinics where
+      the internet is a luxury, not a given.
+    </div>
+    <div class="login-badges">
+      <div class="login-badge"><i class="ti ti-wifi-off"></i>Works fully offline</div>
+      <div class="login-badge"><i class="ti ti-qrcode"></i>QR medical wallet</div>
+      <div class="login-badge"><i class="ti ti-device-mobile"></i>USSD access for feature phones</div>
+      <div class="login-badge"><i class="ti ti-shield-check"></i>WHO-validated drug rules</div>
+    </div>
+  </div>
+
+  <div class="login-right">
+    <div class="login-card">
+      <h2>Clinician login</h2>
+      <p>Sign in to access the patient dashboard</p>
+
+      <div class="form-group">
+        <label class="form-label" for="login-username">Staff ID / Username</label>
+        <input class="form-input" id="login-username" type="text"
+               placeholder="e.g. DR-EFE-001" value="DR-EFE-001" autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="login-password">Password</label>
+        <input class="form-input" id="login-password" type="password"
+               placeholder="••••••••" value="password" autocomplete="current-password">
+      </div>
+
+      <button class="login-btn" id="login-btn">Sign in to dashboard</button>
+      <div class="login-error" id="login-error">
+        <i class="ti ti-alert-circle" style="font-size:14px;vertical-align:-2px;margin-right:6px"></i>
+        <span id="login-error-msg">Invalid credentials. Please try again.</span>
+      </div>
+
+      <div class="login-offline">
+        <i class="ti ti-database-off"></i>
+        <span>Offline mode — local database active</span>
+      </div>
+    </div>
+  </div>
+</div>

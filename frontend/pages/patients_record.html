@@ -1,0 +1,93 @@
+<!-- ═══════════════════════════════════════════════════════════
+     OCML-DI · Patient Record Screen
+     File: pages/patient-record.html
+     Include inside #screen-patient-record
+═══════════════════════════════════════════════════════════ -->
+
+<style>
+.patient-layout { display: grid; grid-template-columns: 300px 1fr; gap: 16px; }
+.patient-card {
+  background: var(--surface); border-radius: var(--radius);
+  border: 1px solid var(--border); padding: 20px;
+}
+.patient-avatar-lg {
+  width: 64px; height: 64px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; font-weight: 600; color: #fff;
+  margin: 0 auto 12px;
+}
+.patient-name { font-size: 17px; font-weight: 600; text-align: center; margin-bottom: 2px; }
+.patient-id   { font-size: 12px; color: var(--muted); text-align: center; font-family: var(--mono); margin-bottom: 16px; }
+.patient-meta { display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--border); padding-top: 16px; }
+.pm-row       { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+.pm-key       { color: var(--muted); }
+.pm-val       { font-weight: 500; }
+</style>
+
+<div id="screen-patient-record" class="screen">
+
+  <!-- BACK NAV -->
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+    <button id="back-to-dashboard"
+      style="background:none;border:none;cursor:pointer;color:var(--muted);display:flex;align-items:center;gap:4px;font-size:13px;font-family:var(--font)">
+      <i class="ti ti-arrow-left" style="font-size:16px"></i>Back
+    </button>
+    <span style="color:var(--hint)">·</span>
+    <span id="record-breadcrumb" style="font-size:13px;color:var(--muted)">Patient record</span>
+  </div>
+
+  <div class="patient-layout">
+
+    <!-- LEFT: PATIENT CARD + QR -->
+    <div>
+      <div class="patient-card">
+        <div class="patient-avatar-lg" id="rec-avatar">AB</div>
+        <div class="patient-name"  id="rec-name">—</div>
+        <div class="patient-id"    id="rec-id">—</div>
+
+        <div class="patient-meta">
+          <div class="pm-row"><span class="pm-key">Age</span>     <span class="pm-val" id="rec-age">—</span></div>
+          <div class="pm-row"><span class="pm-key">Gender</span>  <span class="pm-val" id="rec-gender">—</span></div>
+          <div class="pm-row"><span class="pm-key">Phone</span>   <span class="pm-val" id="rec-phone">—</span></div>
+          <div class="pm-row"><span class="pm-key">Facility</span><span class="pm-val" id="rec-facility">—</span></div>
+          <div class="pm-row"><span class="pm-key">Last visit</span><span class="pm-val" id="rec-visit">—</span></div>
+        </div>
+
+        <div style="margin-top:14px">
+          <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:6px">Conditions</div>
+          <div class="tag-group" id="rec-conditions"></div>
+
+          <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin:12px 0 6px">Current medications</div>
+          <div class="tag-group" id="rec-medications"></div>
+
+          <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin:12px 0 6px">Allergies</div>
+          <div class="tag-group" id="rec-allergies"></div>
+        </div>
+      </div>
+
+      <!-- QR WALLET — rendered by QRWallet component -->
+      <div id="qr-wallet-mount"></div>
+    </div>
+
+    <!-- RIGHT: DRUG CHECK + HISTORY -->
+    <div>
+      <!-- Drug checker — rendered by DrugChecker component -->
+      <div id="drug-checker-mount"></div>
+
+      <!-- PRESCRIPTION HISTORY -->
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title"><i class="ti ti-history"></i>Prescription history</div>
+        </div>
+        <table class="data-table" aria-label="Prescription history">
+          <thead>
+            <tr><th>Drug</th><th>Prescribed by</th><th>Date</th><th>Status</th></tr>
+          </thead>
+          <tbody id="rec-history"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+

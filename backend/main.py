@@ -330,35 +330,51 @@ async def ussd_callback(
         )
 
     elif text == "1":
-        response = "CON Enter drug name:\n(e.g. Ibuprofen)"
+        response = "CON Enter drug name and condition:\nFormat: drug,condition\n(e.g. Ibuprofen,kidney disease)"
 
     elif text.startswith("1*") and len(parts) >= 2:
-        drug = parts[1].strip()
-        if not drug:
+        entry = parts[1].strip()
+
+        if not entry:
             response = "END Please enter a valid drug name."
         else:
+            if "," in entry:
+                drug, condition = entry.split(",", 1)
+                drug = drug.strip()
+                condition = condition.strip()
+                conditions = [condition]
+            else:
+                drug = entry.strip()
+                conditions = []
+
             try:
-                result  = engine.evaluate(
+                result = engine.evaluate(
                     proposed_drug=drug,
                     current_medications=[],
-                    conditions=[],
+                    conditions=conditions,
                 )
-                summary  = _build_ussd_summary(drug, result)
+
+                summary = _build_ussd_summary(drug, result)
                 response = f"END {summary}"
+
                 governance.record_audit(
-                    action       = "ussd_check_performed",
-                    actor_id     = phoneNumber,
-                    patient_name = "USSD caller",
-                    risk_score   = result.max_risk_score,
-                    details      = {
-                        "drug":    drug,
-                        "msisdn":  phoneNumber,
+                    action="ussd_check_performed",
+                    actor_id=phoneNumber,
+                    patient_name="USSD caller",
+                    risk_score=result.max_risk_score,
+                    details={
+                        "drug": drug,
+                        "msisdn": phoneNumber,
                         "session": sessionId,
                         "channel": "ussd",
                     }
                 )
-            except Exception as e:
-                response = f"END Error processing check for {drug}. Please try again."
+
+            except Exception:
+                response = (
+                    f"END Error processing check for {drug}. "
+                    f"Please try again."
+                )
 
     elif text == "2":
         response = (
@@ -373,7 +389,10 @@ async def ussd_callback(
         response = "END Thank you. Stay safe."
 
     else:
-        response = "END Invalid option.\nDial *384*52591# to restart."
+        response = (
+            "END Invalid option.\n"
+            "Dial *384*52591# to restart."
+        )
 
     return PlainTextResponse(content=response)
 

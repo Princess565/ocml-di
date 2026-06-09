@@ -1,0 +1,185 @@
+<!-- ═══════════════════════════════════════════════════════════
+     OCML-DI · USSD Simulator Screen
+     File: pages/ussd.html
+     Include inside #screen-ussd
+═══════════════════════════════════════════════════════════ -->
+
+<style>
+.ussd-layout { display: flex; gap: 32px; align-items: flex-start; justify-content: center; }
+.phone-device {
+  background: #1a1a2e; border-radius: 32px; border: 8px solid #111;
+  overflow: hidden; width: 300px; flex-shrink: 0;
+}
+.phone-topbar {
+  background: #111; height: 28px;
+  display: flex; align-items: center; justify-content: space-between; padding: 0 16px;
+}
+.phone-topbar span { font-size: 10px; color: rgba(255,255,255,0.5); font-family: var(--mono); }
+.phone-screen { background: #0d1117; min-height: 420px; padding: 16px; }
+.ussd-header-bar {
+  background: #161b22; border: 1px solid #30363d; border-radius: 8px;
+  padding: 10px 12px; margin-bottom: 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.ussd-header-bar i    { color: var(--gold); font-size: 16px; }
+.ussd-header-bar span { color: rgba(255,255,255,0.7); font-size: 12px; }
+.ussd-dial-code       { color: var(--gold); font-size: 15px; font-weight: 500; }
+.ussd-output {
+  white-space: pre-line; color: #c9d1d9;
+  font-size: 13px; line-height: 1.9; min-height: 160px;
+  font-family: var(--mono);
+}
+.ussd-output .ussd-warning { color: #ff6b6b; font-weight: 500; }
+.ussd-output .ussd-safe    { color: #3fb950; font-weight: 500; }
+.ussd-output .ussd-prompt  { color: var(--gold); }
+.ussd-input-row { display: flex; gap: 8px; margin-top: 12px; align-items: center; }
+.ussd-text-input {
+  flex: 1; background: #161b22; border: 1px solid #30363d;
+  border-radius: 6px; padding: 8px 10px;
+  font-family: var(--mono); font-size: 13px; color: #c9d1d9; outline: none;
+}
+.ussd-text-input:focus { border-color: var(--gold); }
+.ussd-send-btn {
+  background: var(--gold); border: none; border-radius: 6px;
+  padding: 8px 14px; font-size: 13px; font-weight: 600;
+  color: #7a5400; cursor: pointer; font-family: var(--mono);
+}
+.phone-keypad {
+  background: #111; padding: 12px;
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 6px;
+}
+.key {
+  background: #1a1a2e; border: none; border-radius: 8px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 16px; color: #fff;
+  cursor: pointer; transition: background 0.1s;
+}
+.key:hover  { background: #252540; }
+.key:active { background: var(--navy); }
+.key-call   { background: #1a5c1a; color: #3fb950; }
+.key-end    { background: #5c1a1a; color: #ff6b6b; }
+.ussd-panel { flex: 1; max-width: 380px; }
+.ussd-panel h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+.ussd-panel p  { font-size: 13px; color: var(--muted); margin-bottom: 20px; line-height: 1.6; }
+.ussd-scenario {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px 16px;
+  margin-bottom: 10px; cursor: pointer; transition: border-color 0.15s;
+}
+.ussd-scenario:hover    { border-color: var(--navy); }
+.ussd-scenario.selected { border-color: var(--navy); background: var(--blue-light); }
+.ussd-scenario-title { font-size: 13px; font-weight: 600; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+.ussd-scenario-desc  { font-size: 12px; color: var(--muted); }
+.step-item { display: flex; gap: 12px; margin-bottom: 12px; align-items: flex-start; }
+.step-num  {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--navy); color: #fff;
+  font-size: 11px; font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 1px;
+}
+.step-text        { font-size: 13px; line-height: 1.5; }
+.step-text strong { color: var(--navy); }
+</style>
+
+<div id="screen-ussd" class="screen">
+  <div class="ussd-layout">
+
+    <!-- PHONE MOCKUP -->
+    <div class="phone-device">
+      <div class="phone-topbar">
+        <span>MTN NG</span><span>●●●●○ GSM</span><span>82%</span>
+      </div>
+      <div class="phone-screen">
+        <div class="ussd-header-bar">
+          <i class="ti ti-device-mobile" aria-hidden="true"></i>
+          <span>USSD &nbsp;·&nbsp; <span class="ussd-dial-code">*384*52591#</span></span>
+        </div>
+        <div class="ussd-output" id="ussd-output">
+          <span style="color:rgba(200,200,200,0.35)">Press green dial button to begin…</span>
+        </div>
+        <div class="ussd-input-row">
+          <input class="ussd-text-input" id="ussd-input"
+            placeholder="Enter response…"
+            aria-label="USSD response input">
+          <button class="ussd-send-btn" id="ussd-send">Send</button>
+        </div>
+      </div>
+      <div class="phone-keypad">
+        <button class="key" data-key="1">1</button>
+        <button class="key" data-key="2">2</button>
+        <button class="key" data-key="3">3</button>
+        <button class="key" data-key="4">4</button>
+        <button class="key" data-key="5">5</button>
+        <button class="key" data-key="6">6</button>
+        <button class="key" data-key="7">7</button>
+        <button class="key" data-key="8">8</button>
+        <button class="key" data-key="9">9</button>
+        <button class="key key-call" id="ussd-dial-btn">&#x260E;</button>
+        <button class="key" data-key="0">0</button>
+        <button class="key key-end"  id="ussd-reset-btn">&#x2715;</button>
+      </div>
+    </div>
+
+    <!-- PANEL -->
+    <div class="ussd-panel">
+      <h3>USSD drug safety simulator</h3>
+      <p>
+        Simulate the exact experience on a basic feature phone —
+        no internet, no smartphone. Dial in and test the AI risk engine over GSM 2G.
+      </p>
+
+      <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:8px">
+        Demo scenarios
+      </div>
+
+      <div class="ussd-scenario selected" data-scenario="1">
+        <div class="ussd-scenario-title">
+          <span class="risk-badge rb-critical">Critical</span>NSAID + Kidney disease
+        </div>
+        <div class="ussd-scenario-desc">Ibuprofen prescribed to a CKD patient — the pitch demo case</div>
+      </div>
+      <div class="ussd-scenario" data-scenario="2">
+        <div class="ussd-scenario-title">
+          <span class="risk-badge rb-critical">Critical</span>ARV + Antimalarial
+        </div>
+        <div class="ussd-scenario-desc">Efavirenz + Artemether-lumefantrine interaction</div>
+      </div>
+      <div class="ussd-scenario" data-scenario="3">
+        <div class="ussd-scenario-title">
+          <span class="risk-badge rb-critical">Critical</span>Rifampicin + OCP
+        </div>
+        <div class="ussd-scenario-desc">TB treatment destroying contraceptive efficacy</div>
+      </div>
+      <div class="ussd-scenario" data-scenario="4">
+        <div class="ussd-scenario-title">
+          <span class="risk-badge rb-moderate">Safe</span>Paracetamol check
+        </div>
+        <div class="ussd-scenario-desc">Safe drug — system clears with no interaction</div>
+      </div>
+
+      <div style="margin-top:20px">
+        <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:10px">
+          How to run the demo
+        </div>
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-text">Press <strong>green dial button</strong> to connect</div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-text">Press <strong>1</strong> for drug safety check</div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-text">Type the drug name and press <strong>Send</strong></div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">4</div>
+          <div class="step-text">Risk engine returns an instant alert</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
