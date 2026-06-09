@@ -1,0 +1,27 @@
+# ── OCML-DI Docker Compose ──────────────────────────────────────
+# Orchestrates the backend service with persistent data volume
+
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ocml-di-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      # Persist the SQLite database outside the container
+      - ./data:/app/data
+      - ./ocml_di.db:/app/ocml_di.db
+    environment:
+      - PYTHONUNBUFFERED=1
+      - OCML_ENV=production
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
